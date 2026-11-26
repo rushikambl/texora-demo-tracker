@@ -660,19 +660,19 @@ const fmtDate = d => d.toLocaleDateString('en-IN',{day:'numeric',month:'short',y
 const initials = n => (n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
 
 const hr=new Date().getHours();
-document.getElementById('greeting').textContent='Hi, Nilesh';
+document.getElementById('greeting').textContent='Hi, Rushi';
 document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
 
 let leads=[], db=null, rejectId=null, stFilter='all', dtFilter='all', searchQ='';
 
 // ── FIREBASE CONFIG ──
 const firebaseConfig = {
-  apiKey: "AIzaSyBYg9QnvpQg-NMWzvRjXrr_4V9X3dHZYmY",
-  authDomain: "equal-softtech.firebaseapp.com",
-  projectId: "equal-softtech",
-  storageBucket: "equal-softtech.firebasestorage.app",
-  messagingSenderId: "163914755343",
-  appId: "1:163914755343:web:079b349e1365f9a41a627a"
+  apiKey: "AIzaSyBO5x9s-A-czjU365q5iZnA9FtZR13L1zY",
+  authDomain: "texora-demo-tracker.firebaseapp.com",
+  projectId: "texora-demo-tracker",
+  storageBucket: "texora-demo-tracker.firebasestorage.app",
+  messagingSenderId: "310247094223",
+  appId: "1:310247094223:web:b95244e47a5169bf3784ba"
 };
 
 // ── STATUS ──
