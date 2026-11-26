@@ -688,7 +688,7 @@ function waUrl(l){
 }
 function renderDetail(id){
   const l=leads.find(x=>x.id===id); if(!l){App.close('detOv');return;}
-  const t=td(), n=nextDate(l), md=l.st==='closed'&&l.pay==='cash'?mDays(l):null, m=md!=null?mDate(l):null;
+  const t=td(), md=l.st==='closed'&&l.pay==='cash'?mDays(l):null, m=md!=null?mDate(l):null;
   const tl=(l.act||[]).slice().sort((a,b)=>b.t-a.t);
   const tlab={call:'Call',note:'Note',status:'Status',created:'Created',followup:'Follow-up'};
   $('d-body').innerHTML=`
@@ -760,10 +760,10 @@ function stamp(prev, st, data){
   if(st==='closed') data.wonAt=Date.now();
 }
 
-window.App = {
+const App = window.App = {
   go(tab){
     document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='p-'+tab));
-    document.querySelectorAll('.tab').forEach(b=>{ const on=b.dataset.tab===tab; b.classList.toggle('active',on); on?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'); });
+    document.querySelectorAll('.tab').forEach(b=>{ const on=b.dataset.tab===tab; b.classList.toggle('active',on); if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
     $('fab').classList.toggle('hide', tab==='reports'||tab==='clients');
     window.scrollTo({top:0});
   },
@@ -845,7 +845,7 @@ window.App = {
   async quickGiven(id){
     const l=leads.find(x=>x.id===id);
     try{ await upd(id,{st:'given',givenAt:Date.now(),fu:addDays(td(),2)}, act('status','Demo given'+(l.dd?' ('+fmtY(l.dd)+')':'')+'. Follow-up set for '+fmtY(addDays(td(),2)))); toast('Demo marked as given'); }
-    catch(e){ toast('Could not update.'); }
+    catch(e){ console.error(e); toast('Could not update.'); }
   },
 
   openCall(id){
@@ -870,29 +870,29 @@ window.App = {
   async setFu(id, n){
     const fu = n===null ? null : addDays(td(), n);
     try{ await upd(id,{fu}, act('followup', fu?'Follow-up set for '+fmtY(fu):'Follow-up cleared')); toast(fu?'Follow-up '+rel(fu).toLowerCase():'Follow-up cleared'); }
-    catch(e){ toast('Could not update.'); }
+    catch(e){ console.error(e); toast('Could not update.'); }
   },
   async addNote(id){
     const el=$('d-note'), x=el.value.trim(); if(!x){ el.focus(); return; }
     try{ await upd(id,{}, act('note',x)); el.value=''; toast('Note added'); }
-    catch(e){ toast('Could not add the note.'); }
+    catch(e){ console.error(e); toast('Could not add the note.'); }
   },
   async reject(id){
     const r=$('r-reason').value, n=$('r-notes').value.trim();
     try{ await upd(id,{st:'rejected',rejectReason:r,rejectNotes:n,lostAt:Date.now(),fu:null}, act('status','Marked rejected: '+r+(n?'\n'+n:''))); toast('Marked as rejected'); }
-    catch(e){ toast('Could not update.'); }
+    catch(e){ console.error(e); toast('Could not update.'); }
   },
   async reopen(id){
     try{ await upd(id,{st:'call',rejectReason:null,rejectNotes:null,fu:td()}, act('status','Lead reopened')); toast('Lead reopened'); }
-    catch(e){ toast('Could not update.'); }
+    catch(e){ console.error(e); toast('Could not update.'); }
   },
   async maintDone(id){
     try{ await upd(id,{cd:td()}, act('status','Maintenance done, next cycle starts')); toast('Maintenance marked done'); }
-    catch(e){ toast('Could not update.'); }
+    catch(e){ console.error(e); toast('Could not update.'); }
   },
   async del(id){
     try{ await deleteDoc(doc(db,'leads',id)); close('detOv'); openId=null; toast('Lead deleted'); }
-    catch(e){ toast('Could not delete.'); }
+    catch(e){ console.error(e); toast('Could not delete.'); }
   },
   exportCSV(){
     const cols=[['Name','name'],['Phone','ph'],['Company','co'],['City','city'],['Email','email'],['Software','sw'],['Source','src'],['Referred by','ref'],['Temperature','temp'],['Expected value','val'],['Status',l=>ST[l.st]||l.st],['Demo date','dd'],['Demo time','dt'],['Demo type','dtype'],['Follow-up','fu'],['Amount','amt'],['Payment','pay'],['Closed on','cd'],['Reject reason','rejectReason'],['Added',l=>l.createdAt?ymd(new Date(l.createdAt)):''],['Last note',l=>{const n=(l.act||[]).filter(a=>a.k==='note'||a.k==='call').sort((a,b)=>b.t-a.t)[0];return n?n.x:'';}]];
