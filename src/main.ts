@@ -12,6 +12,7 @@ import { state } from './state';
 import { on, startActions } from './ui/actions';
 import { startSheets } from './ui/sheets';
 import { startShortcuts } from './ui/shortcuts';
+import { handleLaunchParams, startPwa } from './pwa';
 import { toast } from './ui/toast';
 import { el } from './utils/dom';
 import { renderAgenda } from './views/agenda';
@@ -56,17 +57,20 @@ startActions();
 startSheets();
 startCallSheet();
 startShortcuts();
+startPwa();
 onTabChange((tab) => { if (tab === 'masters') renderMasters(); });
 
 el('greeting').textContent = `Hi, ${USER}`;
 el('today-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
 
+let launched = false;
 watchLeads((leads) => {
   state.leads = leads;
   state.leadsLoaded = true;
   setStatus('live', `Live · ${leads.length}`);
   renderAll();
   void seedMasters();
+  if (!launched) { launched = true; handleLaunchParams(); }
 }, (err) => {
   setStatus('error', 'Offline');
   console.error(err);

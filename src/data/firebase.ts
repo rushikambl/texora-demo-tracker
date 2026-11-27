@@ -1,12 +1,15 @@
 import { initializeApp } from 'firebase/app';
 import {
-  addDoc, arrayUnion, collection, deleteDoc, doc, getFirestore, onSnapshot, updateDoc,
-  type FirestoreError,
+  addDoc, arrayUnion, collection, deleteDoc, doc, initializeFirestore, onSnapshot, persistentLocalCache,
+  persistentMultipleTabManager, updateDoc, type FirestoreError,
 } from 'firebase/firestore';
 import { firebaseConfig } from '../config';
 import type { Activity, Lead, LeadData, Master } from '../types';
 
-const db = getFirestore(initializeApp(firebaseConfig));
+// Offline cache: the installed app opens with the last known data and syncs changes when back online.
+const db = initializeFirestore(initializeApp(firebaseConfig), {
+  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+});
 const LEADS = 'leads';
 const MASTERS = 'masters';
 

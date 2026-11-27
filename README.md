@@ -33,13 +33,22 @@ Run `npm run build`, commit the updated `docs/`, and push. The site updates in a
   `R` Reports, `C` Clients, `M` Masters, `J`/`K` move through leads, `Enter` open, inside a lead `E` edit,
   `G` log call, `U` update status, Reports `1` `2` `9` `0` for the period, `?` shows the list, `Esc` closes.
 
+## Install as an app
+
+The site is a PWA (manifest + service worker + icons in `public/`), so phones offer to install it:
+- Android (Chrome): menu ⋮ → **Install app** (or the install banner).
+- iPhone (Safari): Share → **Add to Home Screen**.
+It opens full screen with its own icon, and Firestore's offline cache shows the last data without signal.
+Long-press the icon for shortcuts: **New lead** and **Agenda**.
+
 ## Project structure
 
 ```
 index.html              page markup (no inline JS; buttons declare data-action)
-public/                 favicon, .nojekyll (copied into docs/ on build)
+public/                 icons, manifest, service worker, .nojekyll (copied into docs/ on build)
 src/
   main.ts               entry: styles, Firestore listeners, render loop
+  pwa.ts                service worker registration, home-screen shortcut links
   config.ts             Firebase config, user and company name
   types.ts              Lead, Master, Activity types
   state.ts              in-memory store shared by views

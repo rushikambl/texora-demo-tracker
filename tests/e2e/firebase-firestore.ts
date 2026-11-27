@@ -28,6 +28,9 @@ const emit = (c: string) => {
 };
 
 export const getFirestore = (): object => ({});
+export const initializeFirestore = (): object => ({});
+export const persistentLocalCache = (o?: unknown): unknown => o;
+export const persistentMultipleTabManager = (): object => ({});
 export const collection = (_db: unknown, name: string): string => name;
 export const doc = (_db: unknown, c: string, id: string): [string, string] => [c, id];
 export const arrayUnion = (x: unknown) => ({ __union: x });
