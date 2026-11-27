@@ -284,11 +284,15 @@ input[type=date],input[type=time]{color-scheme:dark}
     </div>
     <div class="chip-row" id="st-chips" role="group" aria-label="Filter by status"></div>
     <div class="tools">
+      <select id="f-acc-f" aria-label="Filter by accountant" onchange="App.renderLeads()"><option value="">Any accountant</option></select>
+      <select id="f-sw-f" aria-label="Filter by current software" onchange="App.renderLeads()"><option value="">Any software</option></select>
+    </div>
+    <div class="tools">
       <select id="f-temp" aria-label="Filter by temperature" onchange="App.renderLeads()">
         <option value="">Any temperature</option><option value="hot">Hot</option><option value="warm">Warm</option><option value="cold">Cold</option>
       </select>
       <select id="f-sort" aria-label="Sort leads" onchange="App.renderLeads()">
-        <option value="next">Sort: next action</option><option value="recent">Sort: newest</option><option value="value">Sort: deal value</option><option value="name">Sort: name</option>
+        <option value="next">Sort: next action</option><option value="recent">Sort: newest</option><option value="value">Sort: deal value</option><option value="name">Sort: name</option><option value="co">Sort: company</option><option value="acc">Sort: accountant</option><option value="cursw">Sort: current software</option>
       </select>
     </div>
     <div class="lead-list" id="l-leads"></div>
@@ -357,6 +361,13 @@ input[type=date],input[type=time]{color-scheme:dark}
       <div class="field"><label for="f-city">City</label><input id="f-city" type="text" placeholder="Surat"></div>
     </div>
     <div class="field"><label for="f-email">Email (optional)</label><input id="f-email" type="email" placeholder="name@company.com"></div>
+    <div class="two">
+      <div class="field"><label for="f-acc">Accountant</label><input id="f-acc" type="text" placeholder="Name" list="acc-list" autocomplete="off"></div>
+      <div class="field"><label for="f-cursw">Current software</label><input id="f-cursw" type="text" placeholder="Equal, Syspro…" list="cursw-list" autocomplete="off"></div>
+    </div>
+    <datalist id="acc-list"></datalist><datalist id="cursw-list"></datalist>
+    <div class="field"><label for="f-biz">Business type</label>
+      <select id="f-biz"><option value="">Not set</option><option>Rapier</option><option>Airjet</option><option>Knitting</option><option>Waterjet</option><option>Embroidery</option><option>Trading</option><option>Other</option></select></div>
     <div class="field"><label for="f-sw">Software interested in</label><input id="f-sw" type="text" placeholder="Weaving ERP, Billing, Mobile app…" list="sw-list"><datalist id="sw-list"><option>Weaving ERP</option><option>Billing</option><option>Accounting</option><option>Dyeing</option><option>Mobile app</option></datalist></div>
     <div class="two">
       <div class="field"><label for="f-src">Lead source</label>
@@ -557,7 +568,7 @@ async function upd(id, data, entry){
 
 // ── rendering ──
 function row(l, right){
-  const sub = [l.co, l.city, l.sw].filter(Boolean).join(', ');
+  const sub = [l.co, l.city, l.accountant?'Acct: '+l.accountant:'', l.curSw].filter(Boolean).join(', ');
   const cls = l.st==='closed' ? 'closed' : l.st;
   return `<button class="lead-row" onclick="App.detail('${l.id}')">
     <span class="av t-${cls}">${esc(initials(l.name))}${l.temp==='hot'?'<i class="hot" aria-label="Hot lead"></i>':''}</span>
@@ -603,19 +614,34 @@ function render(){
   renderLeads(); renderAgenda(); renderReports(); renderClients();
 }
 
+const blankLast=(x,y)=>(!x)-(!y)||String(x||'').localeCompare(String(y||''));
+function fillOpts(id, anyLabel, vals){
+  const el=$(id), cur=el.value, set=new Set();
+  vals.forEach(v=>{ if(!v) return; (id==='f-sw-f'?String(v).split(/\s*\+\s*|\s*,\s*/):[v]).forEach(x=>x&&set.add(x.trim())); });
+  const opts=[...set].sort((a,b)=>a.localeCompare(b));
+  const html=`<option value="">${anyLabel}</option>`+opts.map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('')+'<option value="__none">Not set</option>';
+  if(el.dataset.h!==html){ el.innerHTML=html; el.dataset.h=html; el.value=opts.includes(cur)||cur==='__none'?cur:''; }
+}
 function renderLeads(){
   const counts = {active:leads.filter(isActive).length, all:leads.length};
   Object.keys(ST).forEach(k=>counts[k]=leads.filter(l=>l.st===k).length);
   const chips=[['active','Open'],['call','To call'],['demo','Demo scheduled'],['given','Demo given'],['changes','Changes'],['redemo','Re-demo'],['closed','Won'],['rejected','Rejected'],['all','All']];
   $('st-chips').innerHTML = chips.map(([k,l])=>`<button class="chip ${stFilter===k?'active':''}" aria-pressed="${stFilter===k}" onclick="App.filter('${k}',true)">${l}<span class="n">${counts[k]||0}</span></button>`).join('');
   let list = stFilter==='all'?leads.slice():stFilter==='active'?leads.filter(isActive):leads.filter(l=>l.st===stFilter);
+  fillOpts('f-acc-f','Any accountant',leads.map(l=>l.accountant));
+  fillOpts('f-sw-f','Any software',leads.map(l=>l.curSw));
   const temp=$('f-temp').value; if(temp) list=list.filter(l=>l.temp===temp);
+  const accF=$('f-acc-f').value; if(accF) list=list.filter(l=>accF==='__none'?!l.accountant:(l.accountant||'')===accF);
+  const swF=$('f-sw-f').value; if(swF) list=list.filter(l=>swF==='__none'?!l.curSw:(l.curSw||'').toLowerCase().split(/\s*\+\s*|\s*,\s*/).includes(swF.toLowerCase()));
   if(q){ const s=q.toLowerCase(), dq=q.replace(/\D/g,'');
-    list=list.filter(l=>[l.name,l.co,l.city,l.sw,l.ref,l.src,l.email].some(v=>(v||'').toLowerCase().includes(s)) || (dq.length>=3 && digits(l.ph).includes(dq))); }
+    list=list.filter(l=>[l.name,l.co,l.city,l.sw,l.ref,l.src,l.email,l.accountant,l.curSw,l.biz].some(v=>(v||'').toLowerCase().includes(s)) || (dq.length>=3 && digits(l.ph).includes(dq))); }
   const sort=$('f-sort').value;
   list.sort(sort==='recent'?(a,b)=>(b.createdAt||0)-(a.createdAt||0)
     : sort==='value'?(a,b)=>(+b.val||0)-(+a.val||0)
     : sort==='name'?(a,b)=>(a.name||'').localeCompare(b.name||'')
+    : sort==='co'?(a,b)=>blankLast(a.co,b.co)
+    : sort==='acc'?(a,b)=>blankLast(a.accountant,b.accountant)||blankLast(a.co,b.co)
+    : sort==='cursw'?(a,b)=>blankLast(a.curSw,b.curSw)||blankLast(a.co,b.co)
     : (a,b)=>(nextDate(a)||'9999').localeCompare(nextDate(b)||'9999')||(b.createdAt||0)-(a.createdAt||0));
   $('l-leads').innerHTML = !loaded ? '' : list.length ? list.map(l=>row(l, tag(l)+(isActive(l)?nextMeta(l):l.st==='closed'?`<span class="lead-meta">${money(l.amt)}</span>`:`<span class="lead-meta">${esc(l.rejectReason||'')}</span>`))).join('') : (leads.length? empty('No leads match','Try another filter or clear the search.') : empty('No leads yet','Tap New lead to add your first one.'));
 }
@@ -710,7 +736,10 @@ function renderDetail(id){
   <div class="info">
     <div class="info-row"><span>Phone</span><span><a href="tel:${esc(l.ph)}">${esc(l.ph)}</a></span></div>
     ${l.email?`<div class="info-row"><span>Email</span><span><a href="mailto:${esc(l.email)}">${esc(l.email)}</a></span></div>`:''}
-    ${l.sw?`<div class="info-row"><span>Software</span><span>${esc(l.sw)}</span></div>`:''}
+    <div class="info-row"><span>Accountant</span><span>${l.accountant?esc(l.accountant):'<span style="color:var(--muted);font-weight:400">Not set</span>'}</span></div>
+    <div class="info-row"><span>Current software</span><span>${l.curSw?esc(l.curSw):'<span style="color:var(--muted);font-weight:400">Not set</span>'}</span></div>
+    ${l.biz?`<div class="info-row"><span>Business</span><span>${esc(l.biz)}</span></div>`:''}
+    ${l.sw?`<div class="info-row"><span>Interested in</span><span>${esc(l.sw)}</span></div>`:''}
     ${l.src?`<div class="info-row"><span>Source</span><span>${esc(l.src)}${l.ref?', '+esc(l.ref):''}</span></div>`:l.ref?`<div class="info-row"><span>Referred by</span><span>${esc(l.ref)}</span></div>`:''}
     ${l.st==='closed'?`<div class="info-row"><span>Deal</span><span>${money(l.amt)}, ${l.pay==='upi'?'UPI / Bank':l.pay==='cash'?'Cash':'Cheque'}</span></div><div class="info-row"><span>Closed on</span><span>${fmtY(l.cd)}</span></div>`:''}
     ${m?`<div class="info-row"><span>Maintenance</span><span style="color:${md<=30?'var(--red)':'inherit'}">${m.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})} (${md<0?'overdue':md+' days'})</span></div>`:''}
@@ -740,6 +769,11 @@ function renderDetail(id){
 // ── form ──
 function setSeg(id,v){ document.querySelectorAll('#'+id+' button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===v?'true':'false')); }
 const segVal = id => document.querySelector('#'+id+' button[aria-pressed=true]')?.dataset.v || '';
+function fillLists(){
+  const u=a=>[...new Set(a.filter(Boolean).map(x=>String(x).trim()))].sort();
+  $('acc-list').innerHTML=u(leads.map(l=>l.accountant)).map(v=>`<option value="${esc(v)}">`).join('');
+  $('cursw-list').innerHTML=u(leads.flatMap(l=>String(l.curSw||'').split(/\s*\+\s*|\s*,\s*/))).map(v=>`<option value="${esc(v)}">`).join('');
+}
 function formToggle(){
   const st=$('f-st').value, edit=!!$('f-id').value;
   $('f-demo-wrap').style.display=(st==='demo'||st==='redemo')?'block':'none';
@@ -779,7 +813,7 @@ const App = window.App = {
   openForm(l){
     const e=l||{}; $('f-id').value=e.id||''; $('form-title').textContent=l?'Edit lead':'New lead'; $('f-save').textContent=l?'Save changes':'Save lead';
     $('f-name').value=e.name||''; $('f-ph').value=e.ph||''; $('f-co').value=e.co||''; $('f-city').value=e.city||''; $('f-email').value=e.email||'';
-    $('f-sw').value=e.sw||''; $('f-src').value=e.src||'Reference'; $('f-ref').value=e.ref||''; setSeg('f-temp-seg', e.temp||(l?'':'warm'));
+    $('f-sw').value=e.sw||''; $('f-acc').value=e.accountant||''; $('f-cursw').value=e.curSw||''; $('f-biz').value=e.biz||''; fillLists(); $('f-src').value=e.src||'Reference'; $('f-ref').value=e.ref||''; setSeg('f-temp-seg', e.temp||(l?'':'warm'));
     $('f-val').value=e.val||''; $('f-st').value=e.st||'call'; $('f-dd').value=e.dd||td(); $('f-dt').value=e.dt||''; $('f-dtype').value=e.dtype||'offline'; $('f-loc').value=e.loc||'';
     $('f-pay').value=e.pay||'cheque'; $('f-amt').value=e.amt||''; $('f-cd').value=e.cd||td(); $('f-fu').value=l?(e.fu||''):addDays(td(),1); $('f-note').value='';
     $('f-dup').style.display='none'; formToggle(); open('formOv');
@@ -799,7 +833,7 @@ const App = window.App = {
     const demo=st==='demo'||st==='redemo', won=st==='closed';
     const data={
       name:$('f-name').value.trim(), ph:$('f-ph').value.trim(), co:$('f-co').value.trim(), city:$('f-city').value.trim(), email:$('f-email').value.trim(),
-      sw:$('f-sw').value.trim(), src:$('f-src').value, ref:$('f-ref').value.trim(), temp:segVal('f-temp-seg'), val:$('f-val').value?Number($('f-val').value):null, st,
+      sw:$('f-sw').value.trim(), accountant:$('f-acc').value.trim(), curSw:$('f-cursw').value.trim(), biz:$('f-biz').value, src:$('f-src').value, ref:$('f-ref').value.trim(), temp:segVal('f-temp-seg'), val:$('f-val').value?Number($('f-val').value):null, st,
       dd:demo?$('f-dd').value:null, dt:demo?$('f-dt').value:null, dtype:demo?$('f-dtype').value:null, loc:demo?$('f-loc').value.trim():null,
       pay:won?$('f-pay').value:null, amt:won?Number($('f-amt').value)||0:null, cd:won?$('f-cd').value:null,
       fu:ACTIVE.includes(st)?($('f-fu').value||null):null,
@@ -895,7 +929,7 @@ const App = window.App = {
     catch(e){ console.error(e); toast('Could not delete.'); }
   },
   exportCSV(){
-    const cols=[['Name','name'],['Phone','ph'],['Company','co'],['City','city'],['Email','email'],['Software','sw'],['Source','src'],['Referred by','ref'],['Temperature','temp'],['Expected value','val'],['Status',l=>ST[l.st]||l.st],['Demo date','dd'],['Demo time','dt'],['Demo type','dtype'],['Follow-up','fu'],['Amount','amt'],['Payment','pay'],['Closed on','cd'],['Reject reason','rejectReason'],['Added',l=>l.createdAt?ymd(new Date(l.createdAt)):''],['Last note',l=>{const n=(l.act||[]).filter(a=>a.k==='note'||a.k==='call').sort((a,b)=>b.t-a.t)[0];return n?n.x:'';}]];
+    const cols=[['Name','name'],['Phone','ph'],['Company','co'],['City','city'],['Email','email'],['Accountant','accountant'],['Current software','curSw'],['Business','biz'],['Interested in','sw'],['Source','src'],['Referred by','ref'],['Temperature','temp'],['Expected value','val'],['Status',l=>ST[l.st]||l.st],['Demo date','dd'],['Demo time','dt'],['Demo type','dtype'],['Follow-up','fu'],['Amount','amt'],['Payment','pay'],['Closed on','cd'],['Reject reason','rejectReason'],['Added',l=>l.createdAt?ymd(new Date(l.createdAt)):''],['Last note',l=>{const n=(l.act||[]).filter(a=>a.k==='note'||a.k==='call').sort((a,b)=>b.t-a.t)[0];return n?n.x:'';}]];
     const cell=v=>{ v=v==null?'':String(v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
     const csv=[cols.map(c=>c[0]).join(',')].concat(leads.map(l=>cols.map(([,k])=>cell(typeof k==='function'?k(l):l[k])).join(','))).join('\n');
     const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'})); a.download='texora-leads-'+td()+'.csv'; document.body.appendChild(a); a.click(); a.remove();
