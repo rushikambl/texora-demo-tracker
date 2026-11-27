@@ -25,6 +25,14 @@ npx vite build --mode e2e && python3 tests/e2e/smoke.py
 GitHub Pages serves the `docs/` folder on `main`.
 Run `npm run build`, commit the updated `docs/`, and push. The site updates in about a minute.
 
+## Screens and shortcuts
+
+- Phone: bottom tabs, bottom sheets with a sticky Save bar, filters folded behind "Filters & sort".
+- Desktop (1024px and wider): left sidebar, leads as a table, forms and lead details in a right-hand drawer.
+- Keyboard (desktop, same scheme as TradeJournal): `N` new lead, `/` search, `D` Today, `L` Leads, `A` Agenda,
+  `R` Reports, `C` Clients, `M` Masters, `J`/`K` move through leads, `Enter` open, inside a lead `E` edit,
+  `G` log call, `U` update status, Reports `1` `2` `9` `0` for the period, `?` shows the list, `Esc` closes.
+
 ## Project structure
 
 ```
@@ -48,10 +56,11 @@ src/
     sheets.ts           bottom sheets: open/close, focus trap, Escape, validation, busy state
     components.ts       lead rows, tags, segmented controls
     toast.ts            notifications and error reporting
+    shortcuts.ts        keyboard shortcuts and the shortcuts list
   views/                one file per tab: today, leads, agenda, reports, clients, masters, nav
   sheets/               lead form, lead detail, status update, call log, master edit
   utils/                dates, formatting, DOM helpers
-  styles/               tokens, base, layout, components, views
+  styles/               tokens, base, layout, components, views, responsive (phone + desktop layouts)
 tests/
   domain.test.ts        unit tests for logic
   e2e/                  Firebase fake + Playwright smoke test

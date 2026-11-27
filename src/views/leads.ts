@@ -74,6 +74,9 @@ export const renderLeads = (): void => {
   }
   list.sort(SORTS[select('f-sort').value] || SORTS.next);
 
+  const active = FILTERS.filter((f) => select(f.id).value).length + (temp ? 1 : 0) + (select('f-sort').value !== 'next' ? 1 : 0);
+  el('filter-count').textContent = active ? String(active) : '';
+
   if (!state.leadsLoaded) return;
   html('l-leads', list.length ? list.map((l) => leadRow(l, listRight(l))).join('')
     : state.leads.length ? empty('No leads match', 'Try another filter or clear the search.')
@@ -92,6 +95,10 @@ export const showLeadsFor = (filterId: string, value: string): void => {
 };
 
 on({
+  toggleFilters: (b) => {
+    const open = el('filters').classList.toggle('open');
+    b.setAttribute('aria-expanded', String(open));
+  },
   filter: (b) => { state.statusFilter = b.dataset.arg || 'active'; go('leads'); renderLeads(); },
   filterStay: (b) => { state.statusFilter = b.dataset.arg || 'active'; renderLeads(); },
   renderLeads: () => renderLeads(),

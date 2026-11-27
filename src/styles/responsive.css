@@ -1,0 +1,133 @@
+/* Layout per screen size: phone first, then the desktop app layout (sidebar, table, side drawer). */
+
+/* ── shared pieces ── */
+.sidebar,.desk-only,.lead-thead,.lead-row .col,.lead-co{display:none}
+.kb{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border:1px solid var(--line2);border-bottom-width:2px;border-radius:4px;font:600 12px/1 'Inter',sans-serif;color:var(--muted);background:var(--card2)}
+.kb-on-accent{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.3);color:#fff}
+.kb-list{display:flex;flex-direction:column;margin-bottom:8px}
+.kb-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.kb-row span:last-child{display:flex;gap:4px;flex-shrink:0}
+.lead-row:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+
+/* ── phone & tablet ── */
+.filter-bar{padding:0 16px 10px}
+.filter-bar .chip{width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between}
+.filter-bar .chip .n:not(:empty){background:var(--btn);color:#fff;border-radius:10px;padding:0 7px;margin-left:8px;font-weight:600}
+.filters{display:none}
+.filters.open{display:block}
+.today-cols .block{min-width:0}
+
+/* sticky Save / Cancel bar at the bottom of long forms */
+.sheet:has(.sheet-actions){padding-bottom:0}
+.sheet-actions{position:sticky;bottom:0;z-index:2;display:flex;gap:8px;margin:12px -16px 0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line)}
+.sheet-actions>*{margin-bottom:0}
+.sheet-actions .btn-ghost{flex:1}
+.sheet-actions .btn-primary{flex:2}
+
+.m-add.pad-top-8{padding:8px 0 0}
+
+/* masters add row wraps on small phones */
+@media(max-width:520px){
+  .m-add{flex-wrap:wrap}
+  .m-add #m-name{flex-basis:100%}
+}
+
+/* very small phones: tighter header and stats */
+@media(max-width:360px){
+  .fb-status span{display:none}
+  .stat b{font-size:26px}
+  .stat+.stat{padding-left:10px}
+  .qa{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ── desktop app layout ── */
+@media(min-width:1024px){
+  body{max-width:none;margin:0;padding-left:248px}
+  .mob-only,.tabs,.fab,.handle{display:none!important}
+  .icon-btn.desk-only{display:flex}
+  .pg-title.desk-only{display:block}
+
+  /* sidebar */
+  .sidebar{display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;width:248px;padding:18px 12px;background:var(--card);border-right:1px solid var(--line);z-index:90}
+  .sb-brand{display:flex;align-items:center;gap:10px;padding:0 8px 18px}
+  .sb-nav{display:flex;flex-direction:column;gap:2px}
+  .sb-grp{font-size:12px;font-weight:600;color:var(--muted);padding:16px 10px 6px}
+  .sb-item{display:flex;align-items:center;gap:11px;width:100%;min-height:40px;padding:0 10px;border:none;border-radius:6px;background:none;color:var(--ink2);font:500 14px 'Inter',sans-serif;cursor:pointer;text-align:left}
+  .sb-item svg{width:18px;height:18px;flex-shrink:0}
+  .sb-item>span:nth-of-type(1){flex:1}
+  .sb-item:hover{background:var(--card2);color:var(--ink)}
+  .sb-item.active{background:var(--blue-bg);color:var(--blue)}
+  .sb-item.active .kb{color:var(--blue);border-color:#2F4F7A;background:transparent}
+  .sb-badge:empty{display:none}
+  .sb-badge{font-size:12px;font-weight:600;color:var(--muted);padding:0 4px}
+  .sb-badge.warn{color:#fff;background:var(--red);border-radius:9px;min-width:18px;text-align:center}
+  .sb-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px}
+  .sb-add{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:none;border-radius:6px;background:var(--btn);color:#fff;font:500 15px 'Inter',sans-serif;cursor:pointer}
+  .sb-add:hover{background:var(--btn-h)}
+  .sb-add .kb{margin-left:4px}
+  .sb-keys{display:flex;align-items:center;justify-content:center;gap:8px;min-height:36px;border:none;background:none;color:var(--muted);font:500 13px 'Inter',sans-serif;cursor:pointer;border-radius:6px}
+  .sb-keys:hover{background:var(--card2);color:var(--ink2)}
+
+  /* top bar becomes a page header */
+  .hdr{position:sticky;top:0;z-index:50;background:rgba(20,20,20,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .topbar{padding:12px 32px;min-height:64px}
+  .pg-title{font-size:20px;font-weight:600;letter-spacing:-.3px}
+
+  main.body{max-width:1280px;padding:0 32px 64px}
+  .sec-label{padding:26px 0 10px}
+  .chip-row,.tools,.filter-bar{padding-left:0;padding-right:0}
+  .search-wrap{margin:20px 0 12px;max-width:560px}
+  .day-head{padding:18px 0 8px}
+
+  /* cards instead of edge-to-edge lists */
+  .lead-list,.bars,.kpis,.tbl{border:1px solid var(--line);border-radius:8px;margin:0;width:100%;overflow:hidden}
+  .alert{margin:16px 0 0;width:100%}
+  #maint-alerts:not(:empty){display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+
+  /* Today: greeting + stats card, pipeline card, two columns of lists */
+  .hero{margin-top:24px;border:1px solid var(--line);border-radius:8px 8px 0 0;padding:22px 24px 0}
+  .greeting{font-size:24px}
+  .stats{margin-top:20px}
+  .stat{padding:16px 0 18px}
+  .stat b{font-size:38px}
+  .pipe{border:1px solid var(--line);border-top:none;border-radius:0 0 8px 8px;padding:16px 24px 18px}
+  .pipe-legend{max-width:640px}
+  .today-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+
+  /* Leads: one filter row, real table */
+  .filters,.filters.open{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .filters .tools{display:contents}
+  .filters select{flex:1 1 160px;max-width:240px}
+  .lead-thead.desk-only{display:grid;grid-template-columns:36px minmax(220px,2.2fr) minmax(110px,1fr) minmax(130px,1.2fr) minmax(110px,1fr) minmax(190px,1.3fr);gap:16px;padding:10px 16px;font-size:12px;font-weight:600;color:var(--muted);background:var(--card2);border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0}
+  .lead-thead .r{text-align:right}
+  #l-leads{border-radius:0 0 8px 8px}
+  #l-leads .lead-row{display:grid;grid-template-columns:36px minmax(220px,2.2fr) minmax(110px,1fr) minmax(130px,1.2fr) minmax(110px,1fr) minmax(190px,1.3fr);gap:16px}
+  #l-leads .lead-row .col{display:block;font-size:13px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #l-leads .lead-sub{display:none}
+  #l-leads .lead-co{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #l-leads .lead-right{max-width:none}
+
+  /* Reports: KPI strip, then funnel and reasons side by side */
+  .kpis{grid-template-columns:repeat(4,1fr);margin-top:8px}
+  .bar-row{grid-template-columns:160px 1fr 60px}
+
+  .export{margin:24px 0 0;max-width:360px}
+
+  /* Masters */
+  #p-masters .m-add{padding:0 0 14px;max-width:720px}
+
+  /* Sheets become a right-hand drawer */
+  .overlay{align-items:stretch;justify-content:flex-end}
+  .sheet{width:520px;max-width:520px;height:100vh;max-height:none;border-radius:0;transform:translateX(100%);padding:0 24px 24px}
+  .overlay.open .sheet{transform:translateX(0)}
+  .sheet-title{margin:0 -24px 20px;padding:18px 24px}
+  .sheet-actions{margin:16px -24px 0;padding:14px 24px}
+  .sheet-sm{width:440px}
+  .d-head{margin-top:20px}
+  .toast{top:16px;left:calc(50% + 124px)}
+}
+
+@media(min-width:1440px){
+  main.body{padding:0 48px 64px}
+  .topbar{padding:12px 48px}
+}

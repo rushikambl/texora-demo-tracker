@@ -9,19 +9,42 @@
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
-  <script type="module" crossorigin src="./assets/index-D16YFCKH.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-CyKBzQaT.css">
+  <script type="module" crossorigin src="./assets/index-Av9NAvZ1.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BWlrSdOO.css">
 </head>
 <body>
+<aside class="sidebar" aria-label="Main">
+  <div class="sb-brand"><div class="brand-mark" aria-hidden="true">T</div><div><span class="brand-lg">Texora</span><span class="brand-sm">Demo tracker</span></div></div>
+  <nav class="sb-nav">
+    <div class="sb-grp">Work</div>
+      <button type="button" class="sb-item" data-action="go" data-arg="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Today</span><span class="sb-badge" id="sb-b-today"></span><kbd class="kb">D</kbd></button>
+      <button type="button" class="sb-item" data-action="go" data-arg="leads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.8a3.3 3.3 0 0 1 0 6.4M18.5 14.8c1.6.8 2.6 2.5 3 5.2"/></svg><span>Leads</span><span class="sb-badge" id="sb-b-leads"></span><kbd class="kb">L</kbd></button>
+      <button type="button" class="sb-item" data-action="go" data-arg="agenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg><span>Agenda</span><span class="sb-badge" id="sb-b-agenda"></span><kbd class="kb">A</kbd></button>
+    <div class="sb-grp">Insights</div>
+      <button type="button" class="sb-item" data-action="go" data-arg="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Reports</span><span class="sb-badge" id="sb-b-reports"></span><kbd class="kb">R</kbd></button>
+      <button type="button" class="sb-item" data-action="go" data-arg="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-4V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zM10 5h4v2h-4z"/></svg><span>Clients</span><span class="sb-badge" id="sb-b-clients"></span><kbd class="kb">C</kbd></button>
+    <div class="sb-grp">Setup</div>
+      <button type="button" class="sb-item" data-action="go" data-arg="masters"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2.2"/></svg><span>Masters</span><span class="sb-badge" id="sb-b-masters"></span><kbd class="kb">M</kbd></button>
+  </nav>
+  <div class="sb-foot">
+    <button type="button" class="sb-add" data-action="openForm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New lead<kbd class="kb kb-on-accent">N</kbd></button>
+    <button type="button" class="sb-keys" data-action="showShortcuts">Keyboard shortcuts <kbd class="kb">?</kbd></button>
+  </div>
+</aside>
+
 <div class="hdr">
   <div class="topbar">
-    <div class="brand">
+    <div class="brand mob-only">
       <div class="brand-mark" aria-hidden="true">T</div>
       <div><span class="brand-lg">Texora</span><span class="brand-sm">Demo tracker</span></div>
     </div>
+    <h1 class="pg-title desk-only" id="pg-title">Today</h1>
     <div class="hdr-btns">
       <div class="fb-status"><div class="fb-dot" id="fb-dot"></div><span id="fb-label">Connecting…</span></div>
-      <button class="icon-btn" id="mastersBtn" data-action="go" data-arg="masters" aria-label="Masters">
+      <button class="icon-btn desk-only" data-action="showShortcuts" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>
+      </button>
+      <button class="icon-btn mob-only" id="mastersBtn" data-action="go" data-arg="masters" aria-label="Masters">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2.2"/></svg>
       </button>
       <button class="icon-btn" id="refreshBtn" data-action="refresh" aria-label="Refresh">
@@ -50,13 +73,19 @@
       <div class="pipe-legend" id="pipe-legend"></div>
     </div>
     <div id="maint-alerts"></div>
+    <div class="today-cols">
+    <div class="block">
     <div class="sec-label">Today's demos <small id="c-demos"></small></div>
     <div class="lead-list" id="l-demos">
       <div class="skel" aria-hidden="true"><i class="a"></i><span class="t"><i></i><i></i></span></div>
       <div class="skel" aria-hidden="true"><i class="a"></i><span class="t"><i></i><i></i></span></div>
     </div>
+    </div>
+    <div class="block">
     <div class="sec-label">Follow-ups to do <small id="c-fu"></small></div>
     <div class="lead-list" id="l-fu"></div>
+    </div>
+    </div>
     <div id="cold-wrap">
       <div class="sec-label">Going cold <small>no contact in 7+ days</small></div>
       <div class="lead-list" id="l-cold"></div>
@@ -71,6 +100,8 @@
       <button class="search-clear" id="q-clear" data-action="clearSearch" aria-label="Clear search">×</button>
     </div>
     <div class="chip-row" id="st-chips" role="group" aria-label="Filter by status"></div>
+    <div class="filter-bar mob-only"><button type="button" class="chip" id="filter-toggle" data-action="toggleFilters" aria-expanded="false" aria-controls="filters">Filters &amp; sort<span class="n" id="filter-count"></span></button></div>
+    <div class="filters" id="filters">
     <div class="tools">
       <select id="f-acc-f" aria-label="Filter by accountant" data-change="renderLeads"><option value="">Any accountant</option></select>
       <select id="f-sw-f" aria-label="Filter by current software" data-change="renderLeads"><option value="">Any software</option></select>
@@ -87,7 +118,9 @@
         <option value="next">Sort: next action</option><option value="recent">Sort: newest</option><option value="value">Sort: deal value</option><option value="name">Sort: name</option><option value="co">Sort: company</option><option value="acc">Sort: accountant</option><option value="cursw">Sort: current software</option><option value="ref">Sort: reference giver</option><option value="biz">Sort: business type</option>
       </select>
     </div>
-    <div class="lead-list" id="l-leads"></div>
+    </div>
+    <div class="lead-thead desk-only" aria-hidden="true"><span></span><span>Lead</span><span>Accountant</span><span>Current software</span><span>Referred by</span><span class="r">Status / next action</span></div>
+    <div class="lead-list table-mode" id="l-leads"></div>
   </section>
 
   <!-- AGENDA -->
@@ -210,8 +243,10 @@
       <div class="field" id="f-fu-wrap"><label for="f-fu">Next follow-up</label><input id="f-fu" type="date"></div>
     </div>
     <div class="field" id="f-note-wrap"><label for="f-note">First note (optional)</label><textarea id="f-note" placeholder="What did they ask for?"></textarea></div>
-    <button class="btn-primary" id="f-save" data-action="saveForm">Save lead</button>
-    <button class="btn-ghost" data-action="close" data-arg="formOv">Cancel</button>
+    <div class="sheet-actions">
+      <button class="btn-ghost" data-action="close" data-arg="formOv">Cancel</button>
+      <button class="btn-primary" id="f-save" data-action="saveForm">Save lead</button>
+    </div>
   </div>
 </div>
 
@@ -252,8 +287,10 @@
     </div>
     <div class="field" id="u-fu-wrap"><label for="u-fu">Next follow-up</label><input id="u-fu" type="date"></div>
     <div class="field"><label for="u-note">Note (optional)</label><input id="u-note" type="text" placeholder="What changed?"></div>
-    <button class="btn-primary" data-action="saveStatus">Update status</button>
-    <button class="btn-ghost" data-action="close" data-arg="stOv">Cancel</button>
+    <div class="sheet-actions">
+      <button class="btn-ghost" data-action="close" data-arg="stOv">Cancel</button>
+      <button class="btn-primary" data-action="saveStatus">Update status</button>
+    </div>
   </div>
 </div>
 
@@ -274,8 +311,10 @@
     <div class="field" id="c-fu-wrap"><label for="c-fu">Next follow-up</label><input id="c-fu" type="date">
       <div class="fu-btns"><button type="button" class="btn-sm" data-action="cfu" data-arg="1">Tomorrow</button><button type="button" class="btn-sm" data-action="cfu" data-arg="3">In 3 days</button><button type="button" class="btn-sm" data-action="cfu" data-arg="7">Next week</button></div></div>
     <div id="c-rej-note" class="dup c-rej-note">This lead will move to Rejected with the reason "Not interested".</div>
-    <button class="btn-primary" data-action="saveCall">Save call</button>
-    <button class="btn-ghost" data-action="close" data-arg="callOv">Cancel</button>
+    <div class="sheet-actions">
+      <button class="btn-ghost" data-action="close" data-arg="callOv">Cancel</button>
+      <button class="btn-primary" data-action="saveCall">Save call</button>
+    </div>
   </div>
 </div>
 
@@ -292,6 +331,16 @@
     <button class="btn-ghost" id="me-leads" data-action="mLeads">Show these leads</button>
     <button class="btn-danger" id="me-del" data-action="mDel">Delete</button>
     <button class="btn-ghost" data-action="close" data-arg="mOv">Cancel</button>
+  </div>
+</div>
+
+<!-- KEYBOARD SHORTCUTS -->
+<div class="overlay" id="kbOv">
+  <div class="sheet sheet-sm" role="dialog" aria-modal="true" aria-labelledby="kb-title" tabindex="-1">
+    <div class="handle"></div>
+    <div class="sheet-title" id="kb-title">Keyboard shortcuts</div>
+    <div class="kb-list" id="kb-list"></div>
+    <div class="sheet-actions"><button class="btn-primary" data-action="close" data-arg="kbOv">Got it</button></div>
   </div>
 </div>
 

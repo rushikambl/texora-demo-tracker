@@ -13,7 +13,10 @@ export const leadRow = (l: Lead, right: string): string => {
   const sub = [l.co, l.city, l.accountant ? `Acct: ${l.accountant}` : '', l.curSw].filter(Boolean).join(', ');
   return `<button type="button" class="lead-row" data-action="detail" data-arg="${esc(l.id)}">
     <span class="av t-${l.st}">${esc(initials(l.name))}${l.temp === 'hot' ? '<i class="hot" aria-label="Hot lead"></i>' : ''}</span>
-    <span class="lead-info"><span class="lead-name">${esc(l.name)}</span><span class="lead-sub">${esc(sub) || '&nbsp;'}</span></span>
+    <span class="lead-info"><span class="lead-name">${esc(l.name)}</span><span class="lead-sub">${esc(sub) || '&nbsp;'}</span><span class="lead-co">${esc([l.co, l.city].filter(Boolean).join(', ')) || '&nbsp;'}</span></span>
+    <span class="col">${l.accountant ? esc(l.accountant) : '<span class="muted">—</span>'}</span>
+    <span class="col">${l.curSw ? esc(l.curSw) : '<span class="muted">—</span>'}</span>
+    <span class="col">${l.ref ? esc(l.ref) : '<span class="muted">—</span>'}</span>
     <span class="lead-right">${right}</span></button>`;
 };
 

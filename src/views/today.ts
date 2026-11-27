@@ -22,6 +22,10 @@ export const renderToday = (): void => {
   const badge = el('b-today');
   badge.textContent = String(overdue.length);
   badge.style.display = overdue.length ? 'block' : 'none';
+  const sbToday = el('sb-b-today');
+  sbToday.textContent = overdue.length ? String(overdue.length) : '';
+  sbToday.classList.toggle('warn', overdue.length > 0);
+  el('sb-b-leads').textContent = open.length ? String(open.length) : '';
 
   // pipeline bar
   const counts = PIPELINE.map((p) => state.leads.filter((l) => l.st === p.key).length);

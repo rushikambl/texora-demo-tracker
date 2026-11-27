@@ -15,6 +15,7 @@ export const openSheet = (id: string): void => {
   sheet.scrollTop = 0;
   ov.classList.add('open');
   window.setTimeout(() => {
+    if (!ov.classList.contains('open')) return;
     const first = sheet.querySelector<HTMLElement>(FOCUSABLE);
     (first || sheet).focus({ preventScroll: true });
   }, 300);
@@ -30,6 +31,9 @@ export const closeSheet = (id: string): void => {
   if (opener instanceof HTMLElement && document.contains(opener) && !document.querySelector('.overlay.open')) {
     opener.focus({ preventScroll: true });
   }
+  // If the opener was inside another (now hidden) sheet, focus would stay trapped in this one; release it.
+  const active = document.activeElement;
+  if (active instanceof HTMLElement && ov.contains(active)) active.blur();
 };
 
 /** Switch from one sheet to another after the first has slid away. */

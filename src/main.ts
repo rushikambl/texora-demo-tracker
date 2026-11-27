@@ -3,6 +3,7 @@ import './styles/base.css';
 import './styles/layout.css';
 import './styles/components.css';
 import './styles/views.css';
+import './styles/responsive.css';
 
 import { USER } from './config';
 import { watchLeads, watchMasters } from './data/firebase';
@@ -10,6 +11,7 @@ import { seedMasters } from './data/masterSync';
 import { state } from './state';
 import { on, startActions } from './ui/actions';
 import { startSheets } from './ui/sheets';
+import { startShortcuts } from './ui/shortcuts';
 import { toast } from './ui/toast';
 import { el } from './utils/dom';
 import { renderAgenda } from './views/agenda';
@@ -53,6 +55,7 @@ on({
 startActions();
 startSheets();
 startCallSheet();
+startShortcuts();
 onTabChange((tab) => { if (tab === 'masters') renderMasters(); });
 
 el('greeting').textContent = `Hi, ${USER}`;

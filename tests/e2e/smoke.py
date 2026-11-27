@@ -54,6 +54,7 @@ with sync_playwright() as p:
 
     # leads filters and sorting
     m.click('.tab[data-arg=leads]'); m.wait_for_timeout(300)
+    m.click('#filter-toggle'); m.wait_for_timeout(100)
     m.select_option('#f-acc-f', 'Rakesh'); m.wait_for_timeout(200)
     check('filter by accountant', m.eval_on_selector_all('#l-leads .lead-name', 'e=>e.map(x=>x.textContent)') == ['Test Lead'])
     m.select_option('#f-acc-f', ''); m.select_option('#f-sw-f', 'Equal'); m.wait_for_timeout(200)
@@ -87,8 +88,23 @@ with sync_playwright() as p:
     check('clients', m.locator('#l-won .lead-row').count() == 2)
     check('no horizontal scroll', not m.evaluate('document.documentElement.scrollWidth > innerWidth'))
 
-    d = b.new_page(viewport={'width': 1280, 'height': 800})
-    d.goto('http://127.0.0.1:4173/'); d.wait_for_timeout(500); d.screenshot(path=f'{OUT}/e2e-desktop.png')
+    d = b.new_page(viewport={'width': 1440, 'height': 900})
+    d.on('pageerror', lambda e: errors.append(str(e)))
+    d.goto('http://127.0.0.1:4173/'); d.wait_for_timeout(500)
+    check('desktop sidebar', d.is_visible('.sidebar') and not d.is_visible('.tabs'))
+    d.keyboard.press('l'); d.wait_for_timeout(200)
+    check('shortcut L opens leads', d.inner_text('#pg-title') == 'Leads')
+    check('desktop table header', d.is_visible('.lead-thead'))
+    d.keyboard.press('j'); d.keyboard.press('Enter'); d.wait_for_timeout(400)
+    check('J + Enter opens a lead', d.evaluate("document.getElementById('detOv').classList.contains('open')"))
+    d.keyboard.press('u'); d.wait_for_timeout(400)
+    check('U opens update status', d.evaluate("document.getElementById('stOv').classList.contains('open')"))
+    d.keyboard.press('Escape'); d.wait_for_timeout(200)
+    d.keyboard.press('Shift+?'); d.wait_for_timeout(300)
+    check('? shows shortcuts', d.evaluate("document.getElementById('kbOv').classList.contains('open')"))
+    d.keyboard.press('Escape'); d.keyboard.press('n'); d.wait_for_timeout(300)
+    check('N opens new lead', d.evaluate("document.getElementById('formOv').classList.contains('open')"))
+    d.screenshot(path=f'{OUT}/e2e-desktop.png')
     b.close()
 srv.shutdown()
 
