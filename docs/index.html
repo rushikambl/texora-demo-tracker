@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1E1E1E">
+<meta name="color-scheme" content="dark">
+<title>Texora · Demo Tracker</title>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+  <script type="module" crossorigin src="./assets/index-D16YFCKH.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CyKBzQaT.css">
+</head>
+<body>
+<div class="hdr">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">T</div>
+      <div><span class="brand-lg">Texora</span><span class="brand-sm">Demo tracker</span></div>
+    </div>
+    <div class="hdr-btns">
+      <div class="fb-status"><div class="fb-dot" id="fb-dot"></div><span id="fb-label">Connecting…</span></div>
+      <button class="icon-btn" id="mastersBtn" data-action="go" data-arg="masters" aria-label="Masters">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2.2"/></svg>
+      </button>
+      <button class="icon-btn" id="refreshBtn" data-action="refresh" aria-label="Refresh">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<main class="body">
+
+  <!-- TODAY -->
+  <section id="p-today" class="panel active" aria-label="Today">
+    <div class="hero">
+      <div class="greeting" id="greeting"></div>
+      <div class="hero-date" id="today-date"></div>
+      <div class="stats">
+        <button class="stat" data-action="go" data-arg="agenda"><b id="s-demos">0</b><span>Demos today</span></button>
+        <button class="stat" data-action="go" data-arg="agenda"><b id="s-fu">0</b><span>Follow-ups due</span></button>
+        <button class="stat" id="s-over-wrap" data-action="go" data-arg="agenda"><b id="s-over">0</b><span>Overdue</span></button>
+      </div>
+    </div>
+    <div class="pipe">
+      <div class="pipe-head"><span>Open pipeline</span><span><b id="pipe-val">₹0</b> expected</span></div>
+      <div class="pipe-bar" id="pipe-bar"></div>
+      <div class="pipe-legend" id="pipe-legend"></div>
+    </div>
+    <div id="maint-alerts"></div>
+    <div class="sec-label">Today's demos <small id="c-demos"></small></div>
+    <div class="lead-list" id="l-demos">
+      <div class="skel" aria-hidden="true"><i class="a"></i><span class="t"><i></i><i></i></span></div>
+      <div class="skel" aria-hidden="true"><i class="a"></i><span class="t"><i></i><i></i></span></div>
+    </div>
+    <div class="sec-label">Follow-ups to do <small id="c-fu"></small></div>
+    <div class="lead-list" id="l-fu"></div>
+    <div id="cold-wrap">
+      <div class="sec-label">Going cold <small>no contact in 7+ days</small></div>
+      <div class="lead-list" id="l-cold"></div>
+    </div>
+  </section>
+
+  <!-- LEADS -->
+  <section id="p-leads" class="panel" aria-label="Leads">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="q" type="search" placeholder="Search name, company, phone, city, software" aria-label="Search leads" data-input="search">
+      <button class="search-clear" id="q-clear" data-action="clearSearch" aria-label="Clear search">×</button>
+    </div>
+    <div class="chip-row" id="st-chips" role="group" aria-label="Filter by status"></div>
+    <div class="tools">
+      <select id="f-acc-f" aria-label="Filter by accountant" data-change="renderLeads"><option value="">Any accountant</option></select>
+      <select id="f-sw-f" aria-label="Filter by current software" data-change="renderLeads"><option value="">Any software</option></select>
+    </div>
+    <div class="tools">
+      <select id="f-ref-f" aria-label="Filter by reference giver" data-change="renderLeads"><option value="">Any reference</option></select>
+      <select id="f-biz-f" aria-label="Filter by business type" data-change="renderLeads"><option value="">Any business</option></select>
+    </div>
+    <div class="tools">
+      <select id="f-temp" aria-label="Filter by temperature" data-change="renderLeads">
+        <option value="">Any temperature</option><option value="hot">Hot</option><option value="warm">Warm</option><option value="cold">Cold</option>
+      </select>
+      <select id="f-sort" aria-label="Sort leads" data-change="renderLeads">
+        <option value="next">Sort: next action</option><option value="recent">Sort: newest</option><option value="value">Sort: deal value</option><option value="name">Sort: name</option><option value="co">Sort: company</option><option value="acc">Sort: accountant</option><option value="cursw">Sort: current software</option><option value="ref">Sort: reference giver</option><option value="biz">Sort: business type</option>
+      </select>
+    </div>
+    <div class="lead-list" id="l-leads"></div>
+  </section>
+
+  <!-- AGENDA -->
+  <section id="p-agenda" class="panel" aria-label="Agenda">
+    <div class="sec-label">Next 14 days <small>demos and follow-ups</small></div>
+    <div id="agenda"></div>
+  </section>
+
+  <!-- REPORTS -->
+  <section id="p-reports" class="panel" aria-label="Reports">
+    <div class="chip-row mt-12" id="period-chips" role="group" aria-label="Report period">
+      <button class="chip active" data-p="month" data-action="setPeriod" data-arg="month">This month</button>
+      <button class="chip" data-p="last" data-action="setPeriod" data-arg="last">Last month</button>
+      <button class="chip" data-p="90" data-action="setPeriod" data-arg="90">Last 90 days</button>
+      <button class="chip" data-p="all" data-action="setPeriod" data-arg="all">All time</button>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="sec-label">Funnel <small>leads added in this period</small></div>
+    <div class="bars" id="funnel"></div>
+    <div class="sec-label">Lead sources</div>
+    <div id="sources"></div>
+    <div class="sec-label">Why leads say no</div>
+    <div class="bars" id="reasons"></div>
+    <div class="export">
+      <button class="btn-ghost" data-action="exportCSV">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/></svg>
+        Export all leads (CSV)
+      </button>
+    </div>
+  </section>
+
+  <!-- MASTERS -->
+  <section id="p-masters" class="panel" aria-label="Masters">
+    <div class="sec-label big">Masters <small>lists used in the lead form</small></div>
+    <div class="chip-row" id="m-types" role="group" aria-label="Master type"></div>
+    <div class="m-add">
+      <input id="m-name" type="text" placeholder="Name" aria-label="New entry name" data-enter="mAdd">
+      <input id="m-phone" type="tel" inputmode="tel" placeholder="Phone (optional)" aria-label="New entry phone" data-enter="mAdd">
+      <button class="btn-sm" data-action="mAdd">Add</button>
+    </div>
+    <div class="lead-list" id="m-list"></div>
+  </section>
+
+  <!-- CLIENTS -->
+  <section id="p-clients" class="panel" aria-label="Clients">
+    <div class="sec-label">Won clients <small id="c-won"></small></div>
+    <div class="lead-list" id="l-won"></div>
+    <div class="sec-label">Rejected leads <small id="c-rej"></small></div>
+    <div class="lead-list" id="l-rej"></div>
+  </section>
+</main>
+
+<nav class="tabs" aria-label="Main">
+  <button class="tab active" data-tab="today" data-action="go" data-arg="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Today<span class="badge" id="b-today"></span></button>
+  <button class="tab" data-tab="leads" data-action="go" data-arg="leads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.8a3.3 3.3 0 0 1 0 6.4M18.5 14.8c1.6.8 2.6 2.5 3 5.2"/></svg>Leads</button>
+  <button class="tab" data-tab="agenda" data-action="go" data-arg="agenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>Agenda</button>
+  <button class="tab" data-tab="reports" data-action="go" data-arg="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Reports</button>
+  <button class="tab" data-tab="clients" data-action="go" data-arg="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-4V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zM10 5h4v2h-4z"/></svg>Clients</button>
+</nav>
+
+<button class="fab" id="fab" data-action="openForm" aria-label="Add new lead">
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New lead
+</button>
+
+<!-- LEAD FORM (add + edit) -->
+<div class="overlay" id="formOv">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="form-title" tabindex="-1">
+    <div class="handle"></div>
+    <div class="sheet-title" id="form-title">New lead</div>
+    <input type="hidden" id="f-id">
+    <div class="field"><label for="f-name">Name</label><input id="f-name" type="text" required autocomplete="off" placeholder="Ramesh Patel" aria-describedby="f-name-err"><div class="err" id="f-name-err">Enter the lead's name</div></div>
+    <div class="field"><label for="f-ph">Phone</label><input id="f-ph" type="tel" required inputmode="tel" placeholder="98765 43210" aria-describedby="f-ph-err f-dup" data-input="dupCheck"><div class="err" id="f-ph-err">Enter a phone number</div><div class="dup" id="f-dup" role="status"></div></div>
+    <div class="two">
+      <div class="field"><label for="f-co">Company</label><input id="f-co" type="text" placeholder="Patel Traders"></div>
+      <div class="field"><label for="f-city">City</label><input id="f-city" type="text" placeholder="Surat"></div>
+    </div>
+    <div class="field"><label for="f-email">Email (optional)</label><input id="f-email" type="email" placeholder="name@company.com"></div>
+    <div class="two">
+      <div class="field"><label for="f-acc">Accountant</label><select id="f-acc" data-change="newOpt"></select><input class="newin" id="f-acc-new" type="text" placeholder="New accountant name" aria-label="New accountant name"></div>
+      <div class="field"><label for="f-biz">Business type</label><select id="f-biz" data-change="newOpt"></select><input class="newin" id="f-biz-new" type="text" placeholder="New business type" aria-label="New business type"></div>
+    </div>
+    <div class="field"><span class="flabel" id="cursw-l">Current software <span class="weight-400">(tap all that apply)</span></span>
+      <div class="chips" id="f-cursw" role="group" aria-labelledby="cursw-l"></div>
+      <div class="m-add pad-top-8"><input id="f-cursw-new" type="text" placeholder="Add other software" aria-label="Add other software" data-enter="swChip"><button type="button" class="btn-sm ghost-add" data-action="swChip">Add</button></div>
+    </div>
+    <div class="field"><label for="f-sw">Software interested in</label><input id="f-sw" type="text" placeholder="Weaving ERP, Billing, Mobile app…" list="sw-list"><datalist id="sw-list"><option>Weaving ERP</option><option>Billing</option><option>Accounting</option><option>Dyeing</option><option>Mobile app</option></datalist></div>
+    <div class="two">
+      <div class="field"><label for="f-src">Lead source</label>
+        <select id="f-src"><option>Reference</option><option>Cold call</option><option>Walk-in</option><option>Exhibition</option><option>Website</option><option>Social media</option><option>Existing client</option><option>Other</option></select></div>
+      <div class="field"><label for="f-ref">Referred by</label><select id="f-ref" data-change="newOpt"></select><input class="newin" id="f-ref-new" type="text" placeholder="New reference giver" aria-label="New reference giver name"></div>
+    </div>
+    <div class="field"><span class="flabel" id="temp-l">How interested?</span>
+      <div class="seg" role="group" aria-labelledby="temp-l" id="f-temp-seg">
+        <button type="button" data-v="hot" data-action="seg">Hot</button><button type="button" data-v="warm" data-action="seg">Warm</button><button type="button" data-v="cold" data-action="seg">Cold</button>
+      </div></div>
+    <div class="field"><label for="f-val">Expected deal value ₹</label><input id="f-val" type="number" inputmode="numeric" min="0" placeholder="50000"></div>
+
+    <div class="grp">
+      <div class="field"><label for="f-st">Status</label>
+        <select id="f-st" data-change="formToggle">
+          <option value="call">To call</option><option value="demo">Demo scheduled</option><option value="given">Demo given</option><option value="changes">Changes requested</option><option value="redemo">Re-demo scheduled</option><option value="closed">Won</option><option value="rejected">Rejected</option>
+        </select></div>
+      <div id="f-demo-wrap">
+        <div class="two">
+          <div class="field"><label for="f-dd">Demo date</label><input id="f-dd" type="date"></div>
+          <div class="field"><label for="f-dt">Time</label><input id="f-dt" type="time"></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="f-dtype">Demo type</label><select id="f-dtype"><option value="offline">Offline</option><option value="online">Online</option></select></div>
+          <div class="field"><label for="f-loc">Place or meeting link</label><input id="f-loc" type="text" placeholder="Office / Meet link"></div>
+        </div>
+      </div>
+      <div id="f-won-wrap">
+        <div class="two">
+          <div class="field"><label for="f-pay">Payment</label><select id="f-pay"><option value="cheque">Cheque</option><option value="cash">Cash</option><option value="upi">UPI / Bank</option></select></div>
+          <div class="field"><label for="f-amt">Amount ₹</label><input id="f-amt" type="number" inputmode="numeric" min="0"></div>
+        </div>
+        <div class="field"><label for="f-cd">Closing date</label><input id="f-cd" type="date"></div>
+      </div>
+      <div class="field" id="f-fu-wrap"><label for="f-fu">Next follow-up</label><input id="f-fu" type="date"></div>
+    </div>
+    <div class="field" id="f-note-wrap"><label for="f-note">First note (optional)</label><textarea id="f-note" placeholder="What did they ask for?"></textarea></div>
+    <button class="btn-primary" id="f-save" data-action="saveForm">Save lead</button>
+    <button class="btn-ghost" data-action="close" data-arg="formOv">Cancel</button>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div class="overlay" id="detOv">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="d-name" tabindex="-1">
+    <div class="handle"></div>
+    <div id="d-body"></div>
+  </div>
+</div>
+
+<!-- UPDATE STATUS -->
+<div class="overlay" id="stOv">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="u-title" tabindex="-1">
+    <div class="handle"></div>
+    <div class="sheet-title" id="u-title">Update status</div>
+    <input type="hidden" id="u-id">
+    <div class="field"><label for="u-st">Status</label>
+      <select id="u-st" data-change="updToggle">
+        <option value="call">To call</option><option value="demo">Demo scheduled</option><option value="given">Demo given</option><option value="changes">Changes requested</option><option value="redemo">Re-demo scheduled</option><option value="closed">Won</option>
+      </select></div>
+    <div id="u-demo-wrap">
+      <div class="two">
+        <div class="field"><label for="u-dd">Demo date</label><input id="u-dd" type="date"></div>
+        <div class="field"><label for="u-dt">Time</label><input id="u-dt" type="time"></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="u-dtype">Demo type</label><select id="u-dtype"><option value="offline">Offline</option><option value="online">Online</option></select></div>
+        <div class="field"><label for="u-loc">Place or link</label><input id="u-loc" type="text"></div>
+      </div>
+    </div>
+    <div id="u-won-wrap">
+      <div class="two">
+        <div class="field"><label for="u-pay">Payment</label><select id="u-pay"><option value="cheque">Cheque</option><option value="cash">Cash</option><option value="upi">UPI / Bank</option></select></div>
+        <div class="field"><label for="u-amt">Amount ₹</label><input id="u-amt" type="number" inputmode="numeric" min="0"></div>
+      </div>
+      <div class="field"><label for="u-cd">Closing date</label><input id="u-cd" type="date"></div>
+    </div>
+    <div class="field" id="u-fu-wrap"><label for="u-fu">Next follow-up</label><input id="u-fu" type="date"></div>
+    <div class="field"><label for="u-note">Note (optional)</label><input id="u-note" type="text" placeholder="What changed?"></div>
+    <button class="btn-primary" data-action="saveStatus">Update status</button>
+    <button class="btn-ghost" data-action="close" data-arg="stOv">Cancel</button>
+  </div>
+</div>
+
+<!-- LOG CALL -->
+<div class="overlay" id="callOv">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="c-title" tabindex="-1">
+    <div class="handle"></div>
+    <div class="sheet-title" id="c-title">Log call</div>
+    <input type="hidden" id="c-id">
+    <div class="field"><span class="flabel" id="out-l">How did it go?</span>
+      <div class="seg" role="group" aria-labelledby="out-l" id="c-out">
+        <button type="button" data-v="Interested" data-action="segCall">Interested</button>
+        <button type="button" data-v="Call back later" data-action="segCall">Call back</button>
+        <button type="button" data-v="Not reachable" data-action="segCall">No answer</button>
+        <button type="button" data-v="Not interested" data-action="segCall">Not interested</button>
+      </div></div>
+    <div class="field"><label for="c-note">Notes</label><textarea id="c-note" placeholder="What was discussed?"></textarea></div>
+    <div class="field" id="c-fu-wrap"><label for="c-fu">Next follow-up</label><input id="c-fu" type="date">
+      <div class="fu-btns"><button type="button" class="btn-sm" data-action="cfu" data-arg="1">Tomorrow</button><button type="button" class="btn-sm" data-action="cfu" data-arg="3">In 3 days</button><button type="button" class="btn-sm" data-action="cfu" data-arg="7">Next week</button></div></div>
+    <div id="c-rej-note" class="dup c-rej-note">This lead will move to Rejected with the reason "Not interested".</div>
+    <button class="btn-primary" data-action="saveCall">Save call</button>
+    <button class="btn-ghost" data-action="close" data-arg="callOv">Cancel</button>
+  </div>
+</div>
+
+<!-- MASTER EDIT -->
+<div class="overlay" id="mOv">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="me-title" tabindex="-1">
+    <div class="handle"></div>
+    <div class="sheet-title" id="me-title">Edit</div>
+    <input type="hidden" id="me-id">
+    <div class="field"><label for="me-name">Name</label><input id="me-name" type="text" required aria-describedby="me-name-err"><div class="err" id="me-name-err">Enter a name</div></div>
+    <div class="field" id="me-phone-wrap"><label for="me-phone">Phone</label><input id="me-phone" type="tel" inputmode="tel"></div>
+    <div class="dup info-note" id="me-info"></div>
+    <button class="btn-primary" data-action="mSave">Save changes</button>
+    <button class="btn-ghost" id="me-leads" data-action="mLeads">Show these leads</button>
+    <button class="btn-danger" id="me-del" data-action="mDel">Delete</button>
+    <button class="btn-ghost" data-action="close" data-arg="mOv">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>
