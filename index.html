@@ -40,6 +40,18 @@ a{color:var(--blue)}
 
 /* panels */
 .panel{display:none}.panel.active{display:block}
+.m-add{display:flex;gap:8px;padding:0 16px 12px}
+.m-add input{flex:1;min-width:0;padding:10px 12px;background:var(--card);border:1px solid var(--line2);border-radius:var(--r);color:var(--ink);font-size:16px;outline:none}
+.m-add input:focus{border-color:var(--blue)}
+.m-add .btn-sm{min-height:44px;padding:0 16px;background:var(--btn);color:#fff;border-color:var(--btn)}
+.m-row{padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;min-height:56px;width:100%;background:none;border:none;color:inherit;text-align:left;font-size:inherit}
+.m-row:not(:last-child){border-bottom:1px solid var(--line)}
+.m-row:hover{background:var(--card2)}
+.m-row .lead-info{min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{min-height:40px;padding:0 12px;border:1px solid var(--line2);background:var(--card);color:var(--ink2);border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--blue-bg);border-color:#2F4F7A;color:var(--blue)}
+.newin{display:none;margin-top:6px}
 .body{padding:0 0 150px}
 .hero{padding:16px 16px 0;background:var(--card);border-bottom:1px solid var(--line)}
 .greeting{font-size:20px;font-weight:400}
@@ -236,6 +248,9 @@ input[type=date],input[type=time]{color-scheme:dark}
     </div>
     <div class="hdr-btns">
       <div class="fb-status"><div class="fb-dot" id="fb-dot"></div><span id="fb-label">Connecting…</span></div>
+      <button class="icon-btn" id="mastersBtn" onclick="App.go('masters')" aria-label="Masters">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2.2"/></svg>
+      </button>
       <button class="icon-btn" id="refreshBtn" onclick="App.refresh()" aria-label="Refresh">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
       </button>
@@ -288,11 +303,15 @@ input[type=date],input[type=time]{color-scheme:dark}
       <select id="f-sw-f" aria-label="Filter by current software" onchange="App.renderLeads()"><option value="">Any software</option></select>
     </div>
     <div class="tools">
+      <select id="f-ref-f" aria-label="Filter by reference giver" onchange="App.renderLeads()"><option value="">Any reference</option></select>
+      <select id="f-biz-f" aria-label="Filter by business type" onchange="App.renderLeads()"><option value="">Any business</option></select>
+    </div>
+    <div class="tools">
       <select id="f-temp" aria-label="Filter by temperature" onchange="App.renderLeads()">
         <option value="">Any temperature</option><option value="hot">Hot</option><option value="warm">Warm</option><option value="cold">Cold</option>
       </select>
       <select id="f-sort" aria-label="Sort leads" onchange="App.renderLeads()">
-        <option value="next">Sort: next action</option><option value="recent">Sort: newest</option><option value="value">Sort: deal value</option><option value="name">Sort: name</option><option value="co">Sort: company</option><option value="acc">Sort: accountant</option><option value="cursw">Sort: current software</option>
+        <option value="next">Sort: next action</option><option value="recent">Sort: newest</option><option value="value">Sort: deal value</option><option value="name">Sort: name</option><option value="co">Sort: company</option><option value="acc">Sort: accountant</option><option value="cursw">Sort: current software</option><option value="ref">Sort: reference giver</option><option value="biz">Sort: business type</option>
       </select>
     </div>
     <div class="lead-list" id="l-leads"></div>
@@ -325,6 +344,18 @@ input[type=date],input[type=time]{color-scheme:dark}
         Export all leads (CSV)
       </button>
     </div>
+  </section>
+
+  <!-- MASTERS -->
+  <section id="p-masters" class="panel" aria-label="Masters">
+    <div class="sec-label" style="font-size:16px">Masters <small>lists used in the lead form</small></div>
+    <div class="chip-row" id="m-types" role="group" aria-label="Master type"></div>
+    <div class="m-add">
+      <input id="m-name" type="text" placeholder="Name" aria-label="New entry name" onkeydown="if(event.key==='Enter')App.mAdd()">
+      <input id="m-phone" type="tel" inputmode="tel" placeholder="Phone (optional)" aria-label="New entry phone" onkeydown="if(event.key==='Enter')App.mAdd()">
+      <button class="btn-sm" onclick="App.mAdd()">Add</button>
+    </div>
+    <div class="lead-list" id="m-list"></div>
   </section>
 
   <!-- CLIENTS -->
@@ -362,17 +393,18 @@ input[type=date],input[type=time]{color-scheme:dark}
     </div>
     <div class="field"><label for="f-email">Email (optional)</label><input id="f-email" type="email" placeholder="name@company.com"></div>
     <div class="two">
-      <div class="field"><label for="f-acc">Accountant</label><input id="f-acc" type="text" placeholder="Name" list="acc-list" autocomplete="off"></div>
-      <div class="field"><label for="f-cursw">Current software</label><input id="f-cursw" type="text" placeholder="Equal, Syspro…" list="cursw-list" autocomplete="off"></div>
+      <div class="field"><label for="f-acc">Accountant</label><select id="f-acc" onchange="App.newOpt(this)"></select><input class="newin" id="f-acc-new" type="text" placeholder="New accountant name" aria-label="New accountant name"></div>
+      <div class="field"><label for="f-biz">Business type</label><select id="f-biz" onchange="App.newOpt(this)"></select><input class="newin" id="f-biz-new" type="text" placeholder="New business type" aria-label="New business type"></div>
     </div>
-    <datalist id="acc-list"></datalist><datalist id="cursw-list"></datalist>
-    <div class="field"><label for="f-biz">Business type</label>
-      <select id="f-biz"><option value="">Not set</option><option>Rapier</option><option>Airjet</option><option>Knitting</option><option>Waterjet</option><option>Embroidery</option><option>Trading</option><option>Other</option></select></div>
+    <div class="field"><span class="flabel" id="cursw-l">Current software <span style="font-weight:400">(tap all that apply)</span></span>
+      <div class="chips" id="f-cursw" role="group" aria-labelledby="cursw-l"></div>
+      <div class="m-add" style="padding:8px 0 0"><input id="f-cursw-new" type="text" placeholder="Add other software" aria-label="Add other software" onkeydown="if(event.key==='Enter'){event.preventDefault();App.swChip()}"><button type="button" class="btn-sm" style="background:var(--card);color:var(--ink2);border-color:var(--line2)" onclick="App.swChip()">Add</button></div>
+    </div>
     <div class="field"><label for="f-sw">Software interested in</label><input id="f-sw" type="text" placeholder="Weaving ERP, Billing, Mobile app…" list="sw-list"><datalist id="sw-list"><option>Weaving ERP</option><option>Billing</option><option>Accounting</option><option>Dyeing</option><option>Mobile app</option></datalist></div>
     <div class="two">
       <div class="field"><label for="f-src">Lead source</label>
         <select id="f-src"><option>Reference</option><option>Cold call</option><option>Walk-in</option><option>Exhibition</option><option>Website</option><option>Social media</option><option>Existing client</option><option>Other</option></select></div>
-      <div class="field"><label for="f-ref">Referred by</label><input id="f-ref" type="text" placeholder="Name"></div>
+      <div class="field"><label for="f-ref">Referred by</label><select id="f-ref" onchange="App.newOpt(this)"></select><input class="newin" id="f-ref-new" type="text" placeholder="New reference giver" aria-label="New reference giver name"></div>
     </div>
     <div class="field"><span class="flabel" id="temp-l">How interested?</span>
       <div class="seg" role="group" aria-labelledby="temp-l" id="f-temp-seg">
@@ -474,6 +506,22 @@ input[type=date],input[type=time]{color-scheme:dark}
   </div>
 </div>
 
+<!-- MASTER EDIT -->
+<div class="overlay" id="mOv">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="me-title" tabindex="-1">
+    <div class="handle"></div>
+    <div class="sheet-title" id="me-title">Edit</div>
+    <input type="hidden" id="me-id">
+    <div class="field"><label for="me-name">Name</label><input id="me-name" type="text" required aria-describedby="me-name-err"><div class="err" id="me-name-err">Enter a name</div></div>
+    <div class="field" id="me-phone-wrap"><label for="me-phone">Phone</label><input id="me-phone" type="tel" inputmode="tel"></div>
+    <div class="dup" id="me-info" style="display:block;color:var(--muted);margin-bottom:12px"></div>
+    <button class="btn-primary" onclick="App.mSave()">Save changes</button>
+    <button class="btn-ghost" id="me-leads" onclick="App.mLeads()">Show these leads</button>
+    <button class="btn-danger" id="me-del" onclick="App.mDel()">Delete</button>
+    <button class="btn-ghost" onclick="App.close('mOv')">Cancel</button>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- UI helpers: focus, Escape, inline errors, double-save guard -->
@@ -551,11 +599,36 @@ let leads=[], db=null, loaded=false, stFilter='active', q='', period='month', op
 const fb = initializeApp(firebaseConfig);
 db = getFirestore(fb);
 const setFb = (s,l) => { $('fb-dot').className='fb-dot'+(s==='live'?' live':s==='error'?' error':''); $('fb-label').textContent=l; };
+let masters=[], mLoaded=false, seeded=false, mType='acc';
+const MT={acc:{l:'Accountants',one:'accountant',field:'accountant',phone:true},ref:{l:'Reference givers',one:'reference giver',field:'ref',phone:true},sw:{l:'Software',one:'software',field:'curSw',phone:false},biz:{l:'Business types',one:'business type',field:'biz',phone:false}};
+const splitSw = v => String(v||'').split(/\s*\+\s*|\s*,\s*/).map(x=>x.trim()).filter(Boolean);
+const same = (a,b) => String(a||'').trim().toLowerCase()===String(b||'').trim().toLowerCase();
+const mNames = t => masters.filter(m=>m.t===t).map(m=>m.name).sort((a,b)=>a.localeCompare(b));
+const usesOf = (t,name) => leads.filter(l => t==='sw' ? splitSw(l.curSw).some(x=>same(x,name)) : same(l[MT[t].field],name));
+async function ensureMaster(t, name){
+  name=String(name||'').trim(); if(!name) return;
+  if(masters.some(m=>m.t===t && same(m.name,name))) return;
+  masters.push({t,name,_pending:true});
+  await addDoc(collection(db,'masters'),{t,name,phone:'',createdAt:Date.now()});
+}
+async function seedMasters(){
+  if(seeded || !loaded || !mLoaded) return; seeded=true;
+  const want=[];
+  leads.forEach(l=>{ if(l.accountant) want.push(['acc',l.accountant]); if(l.ref) want.push(['ref',l.ref]); if(l.biz) want.push(['biz',l.biz]); splitSw(l.curSw).forEach(x=>want.push(['sw',x])); });
+  if(!masters.some(m=>m.t==='biz')) ['Rapier','Airjet','Knitting','Waterjet'].forEach(x=>want.push(['biz',x]));
+  if(!masters.some(m=>m.t==='sw')) ['Equal'].forEach(x=>want.push(['sw',x]));
+  for(const [t,n] of want){ try{ await ensureMaster(t,n); }catch(e){ console.error(e); } }
+}
+onSnapshot(collection(db,'masters'), snap => {
+  masters = snap.docs.map(d=>({id:d.id,...d.data()}));
+  mLoaded = true; seedMasters(); renderMasters();
+}, err => { console.error(err); toast('Could not load masters: '+err.code); });
+
 onSnapshot(collection(db,'leads'), snap => {
   leads = snap.docs.map(d=>({id:d.id,...d.data()}));
   loaded = true;
   setFb('live','Live · '+leads.length);
-  render();
+  render(); seedMasters();
   if(openId && $('detOv').classList.contains('open')) renderDetail(openId);
 }, err => { setFb('error','Offline'); console.error(err); toast('Could not load leads: '+err.code); });
 
@@ -611,7 +684,7 @@ function render(){
   const cold = act_.filter(l=>(Date.now()-lastTouch(l))>7*86400000 && !(nextDate(l) && nextDate(l)>=t)).sort((a,b)=>lastTouch(a)-lastTouch(b)).slice(0,6);
   $('cold-wrap').style.display = cold.length?'block':'none';
   $('l-cold').innerHTML = cold.map(l=>row(l, tag(l)+`<span class="lead-meta">Last contact ${ago(lastTouch(l))}</span>`)).join('');
-  renderLeads(); renderAgenda(); renderReports(); renderClients();
+  renderLeads(); renderAgenda(); renderReports(); renderClients(); renderMasters();
 }
 
 const blankLast=(x,y)=>(!x)-(!y)||String(x||'').localeCompare(String(y||''));
@@ -630,8 +703,12 @@ function renderLeads(){
   let list = stFilter==='all'?leads.slice():stFilter==='active'?leads.filter(isActive):leads.filter(l=>l.st===stFilter);
   fillOpts('f-acc-f','Any accountant',leads.map(l=>l.accountant));
   fillOpts('f-sw-f','Any software',leads.map(l=>l.curSw));
+  fillOpts('f-ref-f','Any reference',leads.map(l=>l.ref));
+  fillOpts('f-biz-f','Any business',leads.map(l=>l.biz));
   const temp=$('f-temp').value; if(temp) list=list.filter(l=>l.temp===temp);
   const accF=$('f-acc-f').value; if(accF) list=list.filter(l=>accF==='__none'?!l.accountant:(l.accountant||'')===accF);
+  const refF=$('f-ref-f').value; if(refF) list=list.filter(l=>refF==='__none'?!l.ref:(l.ref||'')===refF);
+  const bizF=$('f-biz-f').value; if(bizF) list=list.filter(l=>bizF==='__none'?!l.biz:(l.biz||'')===bizF);
   const swF=$('f-sw-f').value; if(swF) list=list.filter(l=>swF==='__none'?!l.curSw:(l.curSw||'').toLowerCase().split(/\s*\+\s*|\s*,\s*/).includes(swF.toLowerCase()));
   if(q){ const s=q.toLowerCase(), dq=q.replace(/\D/g,'');
     list=list.filter(l=>[l.name,l.co,l.city,l.sw,l.ref,l.src,l.email,l.accountant,l.curSw,l.biz].some(v=>(v||'').toLowerCase().includes(s)) || (dq.length>=3 && digits(l.ph).includes(dq))); }
@@ -641,6 +718,8 @@ function renderLeads(){
     : sort==='name'?(a,b)=>(a.name||'').localeCompare(b.name||'')
     : sort==='co'?(a,b)=>blankLast(a.co,b.co)
     : sort==='acc'?(a,b)=>blankLast(a.accountant,b.accountant)||blankLast(a.co,b.co)
+    : sort==='ref'?(a,b)=>blankLast(a.ref,b.ref)||blankLast(a.co,b.co)
+    : sort==='biz'?(a,b)=>blankLast(a.biz,b.biz)||blankLast(a.co,b.co)
     : sort==='cursw'?(a,b)=>blankLast(a.curSw,b.curSw)||blankLast(a.co,b.co)
     : (a,b)=>(nextDate(a)||'9999').localeCompare(nextDate(b)||'9999')||(b.createdAt||0)-(a.createdAt||0));
   $('l-leads').innerHTML = !loaded ? '' : list.length ? list.map(l=>row(l, tag(l)+(isActive(l)?nextMeta(l):l.st==='closed'?`<span class="lead-meta">${money(l.amt)}</span>`:`<span class="lead-meta">${esc(l.rejectReason||'')}</span>`))).join('') : (leads.length? empty('No leads match','Try another filter or clear the search.') : empty('No leads yet','Tap New lead to add your first one.'));
@@ -685,6 +764,17 @@ function renderReports(){
   const rs={}; lost.forEach(l=>{const r=l.rejectReason||'Other'; rs[r]=(rs[r]||0)+1;});
   const rk=Object.keys(rs).sort((x,y)=>rs[y]-rs[x]), rm=Math.max(1,...rk.map(k=>rs[k]));
   $('reasons').innerHTML = rk.length ? rk.map(k=>`<div class="bar-row"><span class="lbl">${esc(k)}</span><span class="bar-track"><span class="bar-fill" style="display:block;width:${rs[k]*100/rm}%;background:#F06862"></span></span><span class="val">${rs[k]}</span></div>`).join('') : empty('No lost leads','Nobody said no in this period.');
+}
+
+function renderMasters(){
+  if(!$('m-types')) return;
+  $('m-types').innerHTML=Object.keys(MT).map(k=>`<button class="chip ${mType===k?'active':''}" aria-pressed="${mType===k}" onclick="App.mType('${k}')">${MT[k].l}<span class="n">${masters.filter(m=>m.t===k).length}</span></button>`).join('');
+  $('m-phone').style.display=MT[mType].phone?'block':'none';
+  $('m-name').placeholder='New '+MT[mType].one;
+  const items=masters.filter(m=>m.t===mType&&m.id).sort((a,b)=>a.name.localeCompare(b.name));
+  $('m-list').innerHTML = items.length ? items.map(m=>{ const u=usesOf(mType,m.name), w=u.filter(l=>l.st==='closed').length, o=u.filter(isActive).length;
+    return `<button class="m-row" onclick="App.mEdit('${m.id}')"><span class="av t-call">${esc(initials(m.name))}</span><span class="lead-info"><span class="lead-name" style="display:block">${esc(m.name)}</span><span class="lead-sub" style="display:block">${m.phone?esc(m.phone):(MT[mType].phone?'No phone':'&nbsp;')}</span></span><span class="lead-right"><span class="tag t-call">${u.length} lead${u.length===1?'':'s'}</span><span class="lead-meta">${o} open, ${w} won</span></span></button>`; }).join('')
+    : empty('Nothing here yet','Add the first '+MT[mType].one+' above.');
 }
 
 function renderClients(){
@@ -769,11 +859,17 @@ function renderDetail(id){
 // ── form ──
 function setSeg(id,v){ document.querySelectorAll('#'+id+' button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===v?'true':'false')); }
 const segVal = id => document.querySelector('#'+id+' button[aria-pressed=true]')?.dataset.v || '';
-function fillLists(){
-  const u=a=>[...new Set(a.filter(Boolean).map(x=>String(x).trim()))].sort();
-  $('acc-list').innerHTML=u(leads.map(l=>l.accountant)).map(v=>`<option value="${esc(v)}">`).join('');
-  $('cursw-list').innerHTML=u(leads.flatMap(l=>String(l.curSw||'').split(/\s*\+\s*|\s*,\s*/))).map(v=>`<option value="${esc(v)}">`).join('');
+function fillSel(id, t, cur){
+  const names=mNames(t); if(cur && !names.some(n=>same(n,cur))) names.push(cur);
+  $(id).innerHTML='<option value="">Not set</option>'+names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')+`<option value="__new">+ Add new ${MT[t].one}…</option>`;
+  $(id).value=cur||''; $(id+'-new').style.display='none'; $(id+'-new').value='';
 }
+let swPicked=[];
+function drawSw(){
+  const all=mNames('sw'); swPicked.forEach(x=>{ if(!all.some(n=>same(n,x))) all.push(x); });
+  $('f-cursw').innerHTML=all.map(n=>`<button type="button" aria-pressed="${swPicked.some(x=>same(x,n))}" onclick="App.swToggle(this)" data-v="${esc(n)}">${esc(n)}</button>`).join('') || '<span class="lead-sub">No software in Masters yet</span>';
+}
+function selVal(id){ const v=$(id).value; return v==='__new' ? $(id+'-new').value.trim() : v; }
 function formToggle(){
   const st=$('f-st').value, edit=!!$('f-id').value;
   $('f-demo-wrap').style.display=(st==='demo'||st==='redemo')?'block':'none';
@@ -798,7 +894,9 @@ const App = window.App = {
   go(tab){
     document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='p-'+tab));
     document.querySelectorAll('.tab').forEach(b=>{ const on=b.dataset.tab===tab; b.classList.toggle('active',on); if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
-    $('fab').classList.toggle('hide', tab==='reports'||tab==='clients');
+    $('fab').classList.toggle('hide', tab==='reports'||tab==='clients'||tab==='masters');
+    $('mastersBtn').style.color = tab==='masters' ? 'var(--blue)' : '';
+    if(tab==='masters') renderMasters();
     window.scrollTo({top:0});
   },
   filter(k, stay){ stFilter=k; if(!stay) App.go('leads'); renderLeads(); },
@@ -813,7 +911,7 @@ const App = window.App = {
   openForm(l){
     const e=l||{}; $('f-id').value=e.id||''; $('form-title').textContent=l?'Edit lead':'New lead'; $('f-save').textContent=l?'Save changes':'Save lead';
     $('f-name').value=e.name||''; $('f-ph').value=e.ph||''; $('f-co').value=e.co||''; $('f-city').value=e.city||''; $('f-email').value=e.email||'';
-    $('f-sw').value=e.sw||''; $('f-acc').value=e.accountant||''; $('f-cursw').value=e.curSw||''; $('f-biz').value=e.biz||''; fillLists(); $('f-src').value=e.src||'Reference'; $('f-ref').value=e.ref||''; setSeg('f-temp-seg', e.temp||(l?'':'warm'));
+    $('f-sw').value=e.sw||''; fillSel('f-acc','acc',e.accountant||''); fillSel('f-biz','biz',e.biz||''); fillSel('f-ref','ref',e.ref||''); swPicked=splitSw(e.curSw); drawSw(); $('f-cursw-new').value=''; $('f-src').value=e.src||'Reference';  setSeg('f-temp-seg', e.temp||(l?'':'warm'));
     $('f-val').value=e.val||''; $('f-st').value=e.st||'call'; $('f-dd').value=e.dd||td(); $('f-dt').value=e.dt||''; $('f-dtype').value=e.dtype||'offline'; $('f-loc').value=e.loc||'';
     $('f-pay').value=e.pay||'cheque'; $('f-amt').value=e.amt||''; $('f-cd').value=e.cd||td(); $('f-fu').value=l?(e.fu||''):addDays(td(),1); $('f-note').value='';
     $('f-dup').style.display='none'; formToggle(); open('formOv');
@@ -833,12 +931,13 @@ const App = window.App = {
     const demo=st==='demo'||st==='redemo', won=st==='closed';
     const data={
       name:$('f-name').value.trim(), ph:$('f-ph').value.trim(), co:$('f-co').value.trim(), city:$('f-city').value.trim(), email:$('f-email').value.trim(),
-      sw:$('f-sw').value.trim(), accountant:$('f-acc').value.trim(), curSw:$('f-cursw').value.trim(), biz:$('f-biz').value, src:$('f-src').value, ref:$('f-ref').value.trim(), temp:segVal('f-temp-seg'), val:$('f-val').value?Number($('f-val').value):null, st,
+      sw:$('f-sw').value.trim(), accountant:selVal('f-acc'), curSw:swPicked.join(' + '), biz:selVal('f-biz'), src:$('f-src').value, ref:selVal('f-ref'), temp:segVal('f-temp-seg'), val:$('f-val').value?Number($('f-val').value):null, st,
       dd:demo?$('f-dd').value:null, dt:demo?$('f-dt').value:null, dtype:demo?$('f-dtype').value:null, loc:demo?$('f-loc').value.trim():null,
       pay:won?$('f-pay').value:null, amt:won?Number($('f-amt').value)||0:null, cd:won?$('f-cd').value:null,
       fu:ACTIVE.includes(st)?($('f-fu').value||null):null,
     };
     try{
+      await Promise.all([ensureMaster('acc',data.accountant),ensureMaster('ref',data.ref),ensureMaster('biz',data.biz),...swPicked.map(x=>ensureMaster('sw',x))]);
       if(id){
         stamp(prev.st, st, data);
         const ch = prev.st!==st ? act('status','Status changed to '+ST[st]) : null;
@@ -927,6 +1026,56 @@ const App = window.App = {
   async del(id){
     try{ await deleteDoc(doc(db,'leads',id)); close('detOv'); openId=null; toast('Lead deleted'); }
     catch(e){ console.error(e); toast('Could not delete.'); }
+  },
+  newOpt(sel){ const n=$(sel.id+'-new'); const on=sel.value==='__new'; n.style.display=on?'block':'none'; if(on) n.focus(); },
+  swToggle(b){ const v=b.dataset.v, on=b.getAttribute('aria-pressed')==='true'; swPicked = on ? swPicked.filter(x=>!same(x,v)) : swPicked.concat([v]); b.setAttribute('aria-pressed', !on); },
+  swChip(){ const el=$('f-cursw-new'), v=el.value.trim(); if(!v) return; if(!swPicked.some(x=>same(x,v))) swPicked.push(v); el.value=''; drawSw(); },
+  mType(t){ mType=t; renderMasters(); },
+  async mAdd(){
+    const n=$('m-name').value.trim(), ph=$('m-phone').value.trim(); if(!n){ $('m-name').focus(); return; }
+    if(masters.some(m=>m.t===mType && same(m.name,n))){ toast(n+' is already in the list'); return; }
+    try{ await addDoc(collection(db,'masters'),{t:mType,name:n,phone:MT[mType].phone?ph:'',createdAt:Date.now()}); $('m-name').value=''; $('m-phone').value=''; toast('Added '+n); }
+    catch(e){ console.error(e); toast('Could not add. Check your connection.'); }
+  },
+  mEdit(id){
+    const m=masters.find(x=>x.id===id); if(!m) return; const u=usesOf(m.t,m.name);
+    $('me-id').value=id; $('me-title').textContent='Edit '+MT[m.t].one; $('me-name').value=m.name; $('me-phone').value=m.phone||'';
+    $('me-phone-wrap').style.display=MT[m.t].phone?'block':'none';
+    $('me-info').textContent = u.length ? `Used by ${u.length} lead${u.length===1?'':'s'}. Renaming updates all of them.` : 'Not used by any lead yet.';
+    $('me-leads').style.display=u.length?'flex':'none';
+    $('me-del').disabled=false; $('me-del').dataset.sure=''; $('me-del').textContent = u.length ? `Delete and clear from ${u.length} lead${u.length===1?'':'s'}` : 'Delete';
+    App.close('mOv'); open('mOv');
+  },
+  async mSave(){
+    const sheet=document.querySelector('#mOv .sheet'); sheet.classList.add('tried'); if(!$('me-name').value.trim()){ $('me-name').focus(); return; }
+    busy('mOv');
+    const m=masters.find(x=>x.id===$('me-id').value), n=$('me-name').value.trim(), ph=$('me-phone').value.trim();
+    if(!same(n,m.name) && masters.some(x=>x.t===m.t && x.id!==m.id && same(x.name,n))){ toast(n+' already exists'); return; }
+    try{
+      await updateDoc(doc(db,'masters',m.id),{name:n,phone:MT[m.t].phone?ph:''});
+      if(n!==m.name){ const f=MT[m.t].field;
+        for(const l of usesOf(m.t,m.name)){
+          const v = m.t==='sw' ? splitSw(l.curSw).map(x=>same(x,m.name)?n:x).join(' + ') : n;
+          await upd(l.id,{[f]:v}, act('status',MT[m.t].one[0].toUpperCase()+MT[m.t].one.slice(1)+' renamed from '+m.name+' to '+n));
+        } }
+      close('mOv'); toast('Saved');
+    }catch(e){ console.error(e); toast('Could not save. Check your connection.'); }
+  },
+  async mDel(){
+    const m=masters.find(x=>x.id===$('me-id').value), u=usesOf(m.t,m.name), f=MT[m.t].field, b=$('me-del');
+    if(u.length && b.dataset.sure!=='1'){ b.dataset.sure='1'; b.textContent=`Tap again to remove ${m.name} from ${u.length} lead${u.length===1?'':'s'}`; return; }
+    b.dataset.sure='';
+    try{
+      for(const l of u){ const v = m.t==='sw' ? splitSw(l.curSw).filter(x=>!same(x,m.name)).join(' + ') : ''; await upd(l.id,{[f]:v}); }
+      await deleteDoc(doc(db,'masters',m.id)); close('mOv'); toast('Deleted '+m.name);
+    }catch(e){ console.error(e); toast('Could not delete.'); }
+  },
+  mLeads(){
+    const m=masters.find(x=>x.id===$('me-id').value); if(!m) return; close('mOv');
+    ['f-acc-f','f-sw-f','f-ref-f','f-biz-f'].forEach(i=>$(i).value='');
+    stFilter='all'; App.go('leads'); renderLeads();
+    const sel=$({acc:'f-acc-f',sw:'f-sw-f',ref:'f-ref-f',biz:'f-biz-f'}[m.t]);
+    sel.value=[...sel.options].find(o=>same(o.value,m.name))?.value||''; renderLeads();
   },
   exportCSV(){
     const cols=[['Name','name'],['Phone','ph'],['Company','co'],['City','city'],['Email','email'],['Accountant','accountant'],['Current software','curSw'],['Business','biz'],['Interested in','sw'],['Source','src'],['Referred by','ref'],['Temperature','temp'],['Expected value','val'],['Status',l=>ST[l.st]||l.st],['Demo date','dd'],['Demo time','dt'],['Demo type','dtype'],['Follow-up','fu'],['Amount','amt'],['Payment','pay'],['Closed on','cd'],['Reject reason','rejectReason'],['Added',l=>l.createdAt?ymd(new Date(l.createdAt)):''],['Last note',l=>{const n=(l.act||[]).filter(a=>a.k==='note'||a.k==='call').sort((a,b)=>b.t-a.t)[0];return n?n.x:'';}]];
