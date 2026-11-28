@@ -96,7 +96,7 @@
   #maint-alerts:not(:empty){display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
 
   /* Today: summary on the left, today's lists beside it, going cold below */
-  #p-today.active{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);column-gap:24px;align-items:start}
+  #p-today.active{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-rows:auto auto 1fr;column-gap:24px;align-items:start}
   #p-today>.hero,#p-today>.pipe,#p-today>#maint-alerts{grid-column:1}
   #p-today>.today-cols{grid-column:2;grid-row:1 / span 3;display:flex;flex-direction:column}
   #p-today>#cold-wrap{grid-column:1 / -1}
