@@ -5,7 +5,8 @@ export type Period = 'month' | 'last' | '90' | 'all';
 
 export const periodRange = (period: Period, now: Date = new Date()): [number, number] => {
   let from = 0;
-  let to = now.getTime() + 1;
+  // run to the end of today, so a deal dated today counts whatever the time
+  let to = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
   if (period === 'month') from = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
   else if (period === 'last') {
     from = new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime();
