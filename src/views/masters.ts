@@ -23,7 +23,7 @@ export const renderMasters = (): void => {
     const won = used.filter((l) => l.st === 'closed').length;
     const open = used.filter(isActive).length;
     const sub = m.phone ? esc(m.phone) : info.phone ? 'No phone' : '&nbsp;';
-    return `<button type="button" class="m-row" data-action="mEdit" data-arg="${esc(m.id)}"><span class="av t-call">${esc(initials(m.name))}</span><span class="lead-info"><span class="lead-name">${esc(m.name)}</span><span class="lead-sub">${sub}</span></span><span class="lead-right"><span class="tag t-call">${used.length} lead${used.length === 1 ? '' : 's'}</span><span class="lead-meta">${open} open, ${won} won</span></span></button>`;
+    return `<button type="button" class="m-row" data-action="mEdit" data-arg="${esc(m.id)}"><span class="av t-call">${esc(initials(m.name))}</span><span class="lead-info"><span class="lead-name">${esc(m.name)}</span><span class="lead-sub">${sub}</span></span><span class="lead-right"><span class="lead-meta">${used.length} lead${used.length === 1 ? '' : 's'}</span><span class="lead-meta">${open} open, ${won} won</span></span></button>`;
   }).join('') : empty('Nothing here yet', `Add the first ${info.one} above.`));
 };
 
