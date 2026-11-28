@@ -71,7 +71,7 @@ export const renderDetail = (id: string): void => {
 
   html('d-body', `
   <div class="d-head"><div class="d-name" id="d-name">${esc(l.name)}</div><div class="d-co">${esc([l.co, l.city].filter(Boolean).join(', '))}</div></div>
-  <div class="d-tags">${tag(l)}${l.temp ? `<span class="tag t-${l.temp}">${capitalize(l.temp)}</span>` : ''}${l.val && isActive(l) ? `<span class="tag t-call">${money(l.val)} expected</span>` : ''}</div>
+  <div class="d-tags">${tag(l)}${l.temp ? `<span class="tag t-${l.temp}">${capitalize(l.temp)}</span>` : ''}${l.val && isActive(l) ? `<span class="tag t-value">${money(l.val)} expected</span>` : ''}</div>
   <div class="qa">
     <a class="call" href="tel:${esc(l.ph)}">${ICON.call}Call</a>
     <a class="wa" href="${esc(whatsappUrl(l))}" target="_blank" rel="noopener">${ICON.wa}WhatsApp</a>
