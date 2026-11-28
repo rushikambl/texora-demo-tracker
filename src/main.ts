@@ -5,7 +5,6 @@ import './styles/components.css';
 import './styles/views.css';
 import './styles/responsive.css';
 
-import { USER } from './config';
 import { watchLeads, watchMasters } from './data/firebase';
 import { seedMasters } from './data/masterSync';
 import { state } from './state';
@@ -60,8 +59,7 @@ startShortcuts();
 startPwa();
 onTabChange((tab) => { if (tab === 'masters') renderMasters(); });
 
-el('greeting').textContent = `Hi, ${USER}`;
-el('today-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+el('greeting').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
 
 let launched = false;
 watchLeads((leads) => {
