@@ -118,3 +118,11 @@ describe('csv', () => {
     expect(csv.split('\n')[1]).toContain('Pintu,Equal');
   });
 });
+
+describe('periodRange end', () => {
+  it('includes all of today, so a deal closed this morning counts', () => {
+    const morning = new Date(2026, 10, 28, 9, 30);
+    const [, to] = periodRange('all', morning);
+    expect(to).toBe(new Date(2026, 10, 29).getTime());
+  });
+});
